@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase/client";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -76,6 +77,49 @@ export default function StaffDirectoryPage() {
   const [selectedDept, setSelectedDept] = useState("All");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAgents() {
+      try {
+        const { data, error } = await supabase
+          .from('agents')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error fetching agents:', error);
+          setError(error.message);
+        } else {
+          // Map agents to StaffMember format
+          const mapped: StaffMember[] = (data || []).map((agent: any) => ({
+            id: agent.id,
+            name: agent.name,
+            role: agent.role || agent.framework || 'Agent',
+            department: agent.department || 'Engineering',
+            type: 'AI',
+            provider: agent.framework || 'Kimi',
+            status: agent.status || 'offline',
+            timezone: agent.timezone || 'UTC',
+            efficiency: agent.efficiency_score || 85,
+            skills: [agent.framework || 'AI'],
+            email: `${agent.name?.toLowerCase()?.replace(/\s+/g, '.')}@fuseiq.ai`,
+          }));
+          setStaffMembers(mapped);
+        }
+      } catch (err) {
+        console.error('Exception:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAgents();
+  }, []);
+
   const filteredStaff = staffMembers.filter((member) => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -84,6 +128,22 @@ export default function StaffDirectoryPage() {
     const matchesStatus = statusFilter === "all" || member.status === statusFilter;
     return matchesSearch && matchesDept && matchesStatus;
   });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-[#6B7290]">Loading staff directory...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-400">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
