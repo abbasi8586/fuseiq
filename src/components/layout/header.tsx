@@ -11,6 +11,7 @@ import {
   LogOut,
   CreditCard,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,10 +22,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifications] = useState(3);
+  const { user, loading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
+  };
+
+  const userInitials = user?.email?.charAt(0).toUpperCase() || "U";
+  const userEmail = user?.email || "Guest";
+  const userName = user?.user_metadata?.full_name || userEmail.split("@")[0] || "User";
 
   return (
     <header className="h-14 glass-panel flex items-center px-4 justify-between shrink-0 z-50">
@@ -71,7 +84,7 @@ export function Header() {
           <DropdownMenuTrigger>
             <div className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-white" />
+                <span className="text-xs font-bold text-white">{userInitials}</span>
               </div>
               <ChevronDown className="w-3 h-3 text-[#4A5068]" />
             </div>
@@ -81,8 +94,8 @@ export function Header() {
             className="w-56 glass-card border-white/[0.08]"
           >
             <div className="px-3 py-2 border-b border-white/[0.06]">
-              <p className="text-sm font-medium text-white">Awais Abbasi</p>
-              <p className="text-xs text-[#6B7290]">Director · Abbasi Global</p>
+              <p className="text-sm font-medium text-white">{userName}</p>
+              <p className="text-xs text-[#6B7290]">Director · Abbasi Global LTD</p>
             </div>
             <DropdownMenuItem className="text-[#B8BED8] focus:text-white focus:bg-white/5">
               <User className="w-4 h-4 mr-2" />
@@ -97,9 +110,12 @@ export function Header() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-white/[0.06]" />
-            <DropdownMenuItem className="text-[#FF4757] focus:text-[#FF4757] focus:bg-[#FF4757]/10">
+            <DropdownMenuItem 
+              className="text-[#FF4757] focus:text-[#FF4757] focus:bg-[#FF4757]/10"
+              onClick={handleSignOut}
+            >
               <LogOut className="w-4 h-4 mr-2" />
-              Log out
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
