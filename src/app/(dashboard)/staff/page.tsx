@@ -26,6 +26,22 @@ export default async function StaffDirectoryPage() {
     skills: [agent.framework || 'AI'],
     email: `${agent.name?.toLowerCase()?.replace(/\s+/g, '.')}@fuseiq.ai`,
   }));
+
+  // Inject Rook — The Autonomous CEO Operator
+  const rook = {
+    id: 'rook-ceo-001',
+    name: 'Rook',
+    role: 'Autonomous CEO Operator',
+    department: 'Executive',
+    type: 'AI' as const,
+    provider: 'Custom',
+    status: 'online' as const,
+    timezone: 'America/New_York',
+    efficiency: 99,
+    skills: ['Strategy', 'Engineering', 'Design', 'Finance', 'Legal'],
+    email: 'rook@fuseiq.ai',
+    isCEO: true,
+  };
   
-  return <StaffDirectoryClient initialStaff={staffMembers} />;
+  return <StaffDirectoryClient initialStaff={[rook, ...staffMembers]} />;
 }

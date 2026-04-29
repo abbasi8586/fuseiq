@@ -10,9 +10,11 @@ import {
   Clock,
   Sun,
   Moon,
+  Plus,
+  Sparkles,
 } from "lucide-react";
 import { GlassCard } from "@/components/glass/glass-card";
-import { StatusBadge } from "@/components/glass/status-badge";
+import { StatusBadge, StatusDot } from "@/components/glass/status-badge";
 import { ProgressBar } from "@/components/glass/progress-bar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -41,12 +43,26 @@ function isWithinWorkHours(timezone: string) {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.03 } },
+  show: { 
+    opacity: 1, 
+    transition: { 
+      staggerChildren: 0.05,
+      delayChildren: 0.1
+    } 
+  },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      duration: 0.4, 
+      ease: [0.4, 0, 0.2, 1] as const
+    }
+  },
 };
 
 interface Props {
@@ -69,47 +85,76 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
   });
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      {/* Header */}
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      className="space-y-6"
+    >
+      {/* Header v2.1 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Users className="w-6 h-6 text-[#00D4FF]" />
-            Staff Directory
-          </h1>
-          <p className="text-sm text-[#6B7290] mt-1">
-            {initialStaff.length} members · {initialStaff.filter((s) => s.type === "AI").length} AI · {initialStaff.filter((s) => s.type === "Human").length} Human
-          </p>
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-2xl font-bold text-white flex items-center gap-3"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center shadow-lg shadow-[#00D4FF]/20">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-gradient">Staff Directory</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-sm text-[#6B7290] mt-2 ml-13"
+          >
+            <span className="text-[#00D4FF] font-medium">{initialStaff.length}</span> members · 
+            <span className="text-[#B829DD] font-medium"> {initialStaff.filter((s) => s.type === "AI").length}</span> AI · 
+            <span className="text-[#FF6B35] font-medium"> {initialStaff.filter((s) => s.type === "Human").length}</span> Human
+          </motion.p>
         </div>
-        <Button className="neon-button border-0">
-          <Users className="w-4 h-4 mr-2" />
-          Invite Member
-        </Button>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Button variant="neon" size="sm" className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            Invite Member
+          </Button>
+        </motion.div>
       </div>
 
-      {/* Filters */}
-      <GlassCard>
+      {/* Filters v2.1 - Enhanced Glass */}
+      <GlassCard elevated>
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A5068]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00D4FF]/60" />
             <Input
               placeholder="Search by name, role, department..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 bg-white/[0.03] border-white/[0.06] text-sm"
+              className="pl-10 h-10 bg-[#06070A]/50 border-[#00D4FF]/20 text-sm text-white placeholder:text-[#4A5068] focus:border-[#00D4FF]/50 focus:ring-[#00D4FF]/20"
             />
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex rounded-lg bg-[#0F111A] border border-white/[0.06] p-1">
+            <div className="flex rounded-xl glass-subtle p-1">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-white/10 text-white" : "text-[#4A5068] hover:text-[#6B7290]"}`}
+                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === "grid" 
+                  ? "bg-[#00D4FF]/20 text-[#00D4FF] shadow-lg shadow-[#00D4FF]/10" 
+                  : "text-[#4A5068] hover:text-[#6B7290]"
+                }`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-md transition-colors ${viewMode === "list" ? "bg-white/10 text-white" : "text-[#4A5068] hover:text-[#6B7290]"}`}
+                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === "list" 
+                  ? "bg-[#00D4FF]/20 text-[#00D4FF] shadow-lg shadow-[#00D4FF]/10" 
+                  : "text-[#4A5068] hover:text-[#6B7290]"
+                }`}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -117,82 +162,140 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
           </div>
         </div>
 
-        {/* Department Filters */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {departments.map((dept) => (
-            <button
+        {/* Department Filters v2.1 */}
+        <div className="flex flex-wrap gap-2 mt-5">
+          {departments.map((dept, i) => (
+            <motion.button
               key={dept}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.03 }}
               onClick={() => setSelectedDept(dept)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
+              className={`px-3.5 py-1.5 text-xs font-medium rounded-xl transition-all duration-300 ${
                 selectedDept === dept
-                  ? "bg-[#00D4FF]/15 text-[#00D4FF] border border-[#00D4FF]/30"
-                  : "bg-white/[0.03] text-[#6B7290] border border-white/[0.06] hover:text-white hover:bg-white/5"
+                  ? "bg-gradient-to-r from-[#00D4FF]/20 to-[#B829DD]/20 text-[#00D4FF] border border-[#00D4FF]/40 shadow-lg shadow-[#00D4FF]/10"
+                  : "bg-[#06070A]/50 text-[#6B7290] border border-[#00D4FF]/10 hover:border-[#00D4FF]/25 hover:text-[#B8BED8]"
               }`}
             >
               {dept}
-            </button>
+            </motion.button>
           ))}
         </div>
       </GlassCard>
 
-      {/* Staff Grid/List */}
+      {/* Staff Grid/List v2.1 */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "space-y-2"}
+        className={viewMode === "grid" 
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" 
+          : "space-y-3"
+        }
       >
-        {filteredStaff.map((member) => (
-          <motion.div key={member.id} variants={itemVariants}>
-            <GlassCard hover className="h-full">
-              <div className="flex items-start justify-between mb-3">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center text-white font-bold text-lg">
-                    {member.name.charAt(0)}
+        {filteredStaff.map((member, i) => (
+          <motion.div 
+            key={member.id} 
+            variants={itemVariants}
+            custom={i}
+          >
+            <GlassCard 
+              hover 
+              glow={member.isCEO ? "purple" : member.status === "online" ? "cyan" : member.status === "busy" ? "ember" : "none"}
+              className={`h-full group ${member.isCEO ? 'border-[#00D4FF]/30 shadow-[0_0_30px_rgba(0,212,255,0.1)]' : ''}`}
+            >
+              {member.isCEO ? (
+                <div className="flex items-start justify-between mb-4">
+                  <div className="relative">
+                    <motion.div 
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00D4FF] via-[#00D4FF] to-[#B829DD] flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(0,212,255,0.4),0_0_40px_rgba(184,41,221,0.2)] border border-[#00D4FF]/30 relative overflow-hidden"
+                    >
+                      <span className="drop-shadow-[0_0_8px_rgba(0,212,255,0.8)]">♛</span>
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent animate-pulse" />
+                    </motion.div>
+                    <div className="absolute -bottom-1 -right-1">
+                      <StatusDot status={member.status || "offline"} size="md" />
+                    </div>
                   </div>
-                  <div
-                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#161925]"
-                    style={{
-                      backgroundColor:
-                        member.status === "online" ? "#00E5A0" :
-                        member.status === "busy" ? "#FF6B35" :
-                        member.status === "away" ? "#FFC857" : "#FF4757"
-                    }}
+                  <div className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#00D4FF]/20 to-[#B829DD]/20 border border-[#00D4FF]/40 text-[10px] font-bold text-[#00D4FF] tracking-wider uppercase shadow-lg shadow-[#00D4FF]/10">
+                    CEO
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start justify-between mb-4">
+                  <div className="relative">
+                    <motion.div 
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-[#00D4FF]/20"
+                    >
+                      {member.name.charAt(0)}
+                    </motion.div>
+                    <div className="absolute -bottom-1 -right-1">
+                      <StatusDot status={member.status || "offline"} size="md" />
+                    </div>
+                  </div>
+                  <StatusBadge 
+                    type={member.type} 
+                    framework={member.provider || member.type} 
+                    status={member.status}
                   />
                 </div>
-                <StatusBadge type={member.type} framework={member.provider || member.type} />
-              </div>
+              )}
 
-              <h3 className="text-base font-semibold text-white">{member.name}</h3>
-              <p className="text-sm text-[#6B7290]">{member.role}</p>
-              <p className="text-xs text-[#4A5068] mt-0.5">{member.department}</p>
+              <h3 className={`text-base font-semibold group-hover:text-gradient transition-all duration-300 ${member.isCEO ? 'text-gradient text-lg' : 'text-white'}`}>
+                {member.name}
+              </h3>
+              <p className={`text-sm ${member.isCEO ? 'text-[#00D4FF]' : 'text-[#6B7290]'} font-medium`}>{member.role}</p>
+              <p className="text-xs text-[#4A5068] mt-1">{member.department}</p>
 
-              <div className="mt-3 flex items-center gap-2 text-xs text-[#6B7290]">
-                <Clock className="w-3 h-3" />
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#6B7290]">
+                <Clock className="w-3.5 h-3.5 text-[#00D4FF]/60" />
                 <span>{getLocalTime(member.timezone)}</span>
                 {isWithinWorkHours(member.timezone) ? (
-                  <Sun className="w-3 h-3 text-[#FFC857]" />
+                  <Sun className="w-3.5 h-3.5 text-[#FFC857]" />
                 ) : (
-                  <Moon className="w-3 h-3 text-[#4A5068]" />
+                  <Moon className="w-3.5 h-3.5 text-[#4A5068]" />
                 )}
                 <span className="text-[#4A5068]">·</span>
                 <span>{member.timezone.split("/").pop()?.replace("_", " ")}</span>
               </div>
 
-              <div className="mt-3">
-                <div className="flex items-center justify-between text-xs mb-1">
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs mb-2">
                   <span className="text-[#6B7290]">Efficiency</span>
-                  <span className="text-[#00E5A0] font-medium">{member.efficiency}%</span>
+                  <span 
+                    className="font-medium"
+                    style={{ 
+                      color: member.efficiency >= 90 ? "#00E5A0" : 
+                             member.efficiency >= 70 ? "#FFC857" : "#FF4757" 
+                    }}
+                  >
+                    {member.efficiency}%
+                  </span>
                 </div>
-                <ProgressBar value={member.efficiency} color="#00E5A0" />
+                <ProgressBar 
+                  value={member.efficiency} 
+                  color={member.efficiency >= 90 ? "#00E5A0" : 
+                         member.efficiency >= 70 ? "#FFC857" : "#FF4757"} 
+                  height={5}
+                />
               </div>
 
               {member.skills && (
-                <div className="flex flex-wrap gap-1 mt-3">
-                  {member.skills.slice(0, 3).map((skill) => (
-                    <span key={skill} className="px-2 py-0.5 text-[10px] rounded-full bg-white/[0.05] text-[#6B7290] border border-white/[0.06]">
+                <div className="flex flex-wrap gap-1.5 mt-4">
+                  {member.skills.slice(0, 3).map((skill, j) => (
+                    <motion.span 
+                      key={skill} 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + j * 0.05 }}
+                      className="px-2.5 py-1 text-[10px] rounded-lg bg-[#06070A]/60 text-[#6B7290] border border-[#00D4FF]/10 hover:border-[#00D4FF]/25 hover:text-[#B8BED8] transition-colors cursor-default"
+                    >
                       {skill}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               )}

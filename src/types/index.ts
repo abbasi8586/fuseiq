@@ -29,6 +29,7 @@ export interface StaffMember {
   efficiency: number;
   skills?: string[];
   email?: string;
+  isCEO?: boolean;
 }
 
 export interface Task {
