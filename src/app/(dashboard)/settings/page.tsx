@@ -2,199 +2,492 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Settings, Key, Bell, Shield, Users, CreditCard, Globe, Trash2, Save } from "lucide-react";
-import { GlassCard } from "@/components/glass/glass-card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Settings,
+  Plug,
+  CreditCard,
+  Bell,
+  Shield,
+  Eye,
+  EyeOff,
+  Check,
+  ChevronRight,
+  Moon,
+  Sun,
+  Monitor,
+} from "lucide-react";
+import { SettingsTabs } from "@/components/settings/settings-tabs";
 
-const providers = [
-  { name: "Kimi", keyType: "Kimi API Key", models: ["Kimi K2", "Kimi K1.5", "Kimi Lite"], connected: true, color: "#00D4FF" },
-  { name: "OpenAI", keyType: "OpenAI API Key", models: ["GPT-5", "GPT-4o", "GPT-4o-mini"], connected: true, color: "#00E5A0" },
-  { name: "Anthropic", keyType: "Anthropic API Key", models: ["Claude 3.5 Sonnet", "Claude 3 Opus"], connected: true, color: "#B829DD" },
-  { name: "Google", keyType: "Google AI API Key", models: ["Gemini 2.0 Pro", "Gemini 2.0 Flash"], connected: false, color: "#FF6B35" },
-  { name: "xAI Grok", keyType: "xAI API Key", models: ["Grok-2", "Grok-2 Mini"], connected: false, color: "#FFC857" },
-];
+// ── Sub-components for each tab ────────────────────────────
 
-export default function SettingsPage() {
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [costAlerts, setCostAlerts] = useState(true);
-  const [dailyLimit, setDailyLimit] = useState("50");
+function GeneralTab() {
+  const [workspace, setWorkspace] = useState("FuseIQ Production");
+  const [timezone, setTimezone] = useState("America/New_York");
+  const [theme, setTheme] = useState("dark");
+
+  const themes = [
+    { id: "dark", label: "Dark", icon: Moon },
+    { id: "light", label: "Light", icon: Sun },
+    { id: "system", label: "System", icon: Monitor },
+  ];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-4xl">
+    <div className="glass-card p-6 rounded-xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Settings className="w-6 h-6 text-[#00D4FF]" />
-          Settings
-        </h1>
-        <p className="text-sm text-[#6B7290] mt-1">Manage your workspace, API keys, and preferences</p>
+        <h3 className="text-text-hero font-semibold mb-1">General Settings</h3>
+        <p className="text-text-muted text-sm">Manage your workspace preferences</p>
       </div>
 
-      <Tabs defaultValue="providers" className="space-y-6">
-        <TabsList className="bg-[#0F111A] border border-white/[0.06]">
-          <TabsTrigger value="providers" className="data-[state=active]:bg-[#00D4FF]/15 data-[state=active]:text-[#00D4FF]">
-            <Key className="w-4 h-4 mr-2" />
-            Providers
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="data-[state=active]:bg-[#00D4FF]/15 data-[state=active]:text-[#00D4FF]">
-            <Bell className="w-4 h-4 mr-2" />
-            Notifications
-          </TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-[#00D4FF]/15 data-[state=active]:text-[#00D4FF]">
-            <Shield className="w-4 h-4 mr-2" />
-            Security
-          </TabsTrigger>
-          <TabsTrigger value="billing" className="data-[state=active]:bg-[#00D4FF]/15 data-[state=active]:text-[#00D4FF]">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Billing
-          </TabsTrigger>
-        </TabsList>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-text-body mb-2">
+            Workspace Name
+          </label>
+          <input
+            type="text"
+            value={workspace}
+            onChange={(e) => setWorkspace(e.target.value)}
+            className="glass-input w-full px-4 py-2.5 rounded-lg text-text-hero text-sm focus:outline-none"
+          />
+        </div>
 
-        <TabsContent value="providers" className="space-y-4">
-          <GlassCard>
-            <h3 className="text-lg font-semibold text-white mb-1">BYOK Providers</h3>
-            <p className="text-sm text-[#6B7290] mb-4">Connect your own API keys. We never mark up costs.</p>
-            <div className="space-y-3">
-              {providers.map((provider) => (
-                <div key={provider.name} className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${provider.color}15` }}>
-                      <Key className="w-5 h-5" style={{ color: provider.color }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-white">{provider.name}</p>
-                      <p className="text-xs text-[#6B7290]">{provider.models.join(" · ")}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="text-xs px-2 py-1 rounded-full"
-                      style={{
-                        backgroundColor: provider.connected ? "rgba(0,229,160,0.08)" : "rgba(255,71,87,0.08)",
-                        color: provider.connected ? "#00E5A0" : "#FF4757",
-                      }}
-                    >
-                      {provider.connected ? "Connected" : "Not Connected"}
-                    </span>
-                    <Button size="sm" variant="outline" className="border-white/[0.08] text-[#B8BED8]">
-                      {provider.connected ? "Manage" : "Connect"}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-        </TabsContent>
+        <div>
+          <label className="block text-sm font-medium text-text-body mb-2">
+            Timezone
+          </label>
+          <select
+            value={timezone}
+            onChange={(e) => setTimezone(e.target.value)}
+            className="glass-input w-full px-4 py-2.5 rounded-lg text-text-hero text-sm focus:outline-none appearance-none cursor-pointer"
+          >
+            <option value="America/New_York">Eastern Time (ET)</option>
+            <option value="America/Chicago">Central Time (CT)</option>
+            <option value="America/Denver">Mountain Time (MT)</option>
+            <option value="America/Los_Angeles">Pacific Time (PT)</option>
+            <option value="UTC">UTC</option>
+            <option value="Europe/London">London (GMT)</option>
+            <option value="Asia/Tokyo">Tokyo (JST)</option>
+          </select>
+        </div>
 
-        <TabsContent value="notifications" className="space-y-4">
-          <GlassCard>
-            <h3 className="text-lg font-semibold text-white mb-4">Notification Preferences</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-white/[0.06]">
-                <div>
-                  <p className="text-sm text-white">Email Notifications</p>
-                  <p className="text-xs text-[#6B7290]">Receive updates via email</p>
-                </div>
-                <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-white/[0.06]">
-                <div>
-                  <p className="text-sm text-white">Push Notifications</p>
-                  <p className="text-xs text-[#6B7290]">Browser and mobile push alerts</p>
-                </div>
-                <Switch checked={pushNotifications} onCheckedChange={setPushNotifications} />
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-white/[0.06]">
-                <div>
-                  <p className="text-sm text-white">Cost Alerts</p>
-                  <p className="text-xs text-[#6B7290]">Warn when approaching spend limits</p>
-                </div>
-                <Switch checked={costAlerts} onCheckedChange={setCostAlerts} />
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <div>
-                  <p className="text-sm text-white">Daily Spend Limit</p>
-                  <p className="text-xs text-[#6B7290]">Maximum daily AI spend</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-[#6B7290]">$</span>
-                  <Input
-                    value={dailyLimit}
-                    onChange={(e) => setDailyLimit(e.target.value)}
-                    className="w-20 h-8 bg-white/[0.03] border-white/[0.06] text-sm text-white"
-                  />
-                </div>
-              </div>
-            </div>
-          </GlassCard>
-        </TabsContent>
+        <div>
+          <label className="block text-sm font-medium text-text-body mb-3">
+            Theme
+          </label>
+          <div className="flex gap-3">
+            {themes.map((t) => {
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTheme(t.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border text-sm font-medium transition-all ${
+                    theme === t.id
+                      ? "border-primary-cyan/50 bg-primary-cyan/10 text-primary-cyan"
+                      : "border-white/10 text-text-muted hover:text-text-body hover:border-white/20"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
-        <TabsContent value="security" className="space-y-4">
-          <GlassCard>
-            <h3 className="text-lg font-semibold text-white mb-4">Security Settings</h3>
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-[#00E5A0]/5 border border-[#00E5A0]/20">
-                <p className="text-sm font-medium text-[#00E5A0]">Encryption Active</p>
-                <p className="text-xs text-[#6B7290] mt-1">All API keys encrypted with AES-256-GCM</p>
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-white/[0.06]">
-                <div>
-                  <p className="text-sm text-white">Two-Factor Authentication</p>
-                  <p className="text-xs text-[#6B7290]">Require 2FA for all admin actions</p>
-                </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <div>
-                  <p className="text-sm text-white">Audit Log Retention</p>
-                  <p className="text-xs text-[#6B7290]">Keep immutable logs for 7 years</p>
-                </div>
-                <span className="text-xs text-[#00E5A0]">Enabled</span>
-              </div>
-            </div>
-          </GlassCard>
-          <GlassCard className="border-[#FF4757]/20">
-            <h3 className="text-lg font-semibold text-[#FF4757] mb-2">Danger Zone</h3>
-            <p className="text-sm text-[#6B7290] mb-4">Destructive actions that cannot be undone.</p>
-            <Button variant="outline" className="border-[#FF4757]/30 text-[#FF4757] hover:bg-[#FF4757]/10">
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete Workspace
-            </Button>
-          </GlassCard>
-        </TabsContent>
+      <div className="pt-4 border-t border-white/10 flex justify-end">
+        <button className="neon-button px-6 py-2.5 rounded-lg text-sm font-medium">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  );
+}
 
-        <TabsContent value="billing" className="space-y-4">
-          <GlassCard>
-            <h3 className="text-lg font-semibold text-white mb-4">Current Plan</h3>
-            <div className="p-4 rounded-lg bg-gradient-to-r from-[#00D4FF]/10 to-[#B829DD]/10 border border-[#00D4FF]/20">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-lg font-bold text-white">Professional</p>
-                <span className="text-xs px-2 py-1 rounded-full bg-[#00D4FF]/20 text-[#00D4FF]">Current</span>
+function IntegrationsTab() {
+  const [keys, setKeys] = useState({
+    openai: "sk-•••••••••••••••••••••••••••••••••••••••••••",
+    kimi: "kimi-••••••••••••••••••••••••••••••••••••••••••",
+    anthropic: "sk-ant-••••••••••••••••••••••••••••••••••••••",
+  });
+  const [visible, setVisible] = useState<Record<string, boolean>>({});
+
+  const toggleVisible = (provider: string) => {
+    setVisible((v) => ({ ...v, [provider]: !v[provider] }));
+  };
+
+  const providers = [
+    { id: "openai", label: "OpenAI", placeholder: "sk-..." },
+    { id: "kimi", label: "Kimi", placeholder: "kimi-..." },
+    { id: "anthropic", label: "Anthropic", placeholder: "sk-ant-..." },
+  ];
+
+  return (
+    <div className="glass-card p-6 rounded-xl space-y-6">
+      <div>
+        <h3 className="text-text-hero font-semibold mb-1">API Integrations</h3>
+        <p className="text-text-muted text-sm">
+          Connect your LLM provider API keys
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {providers.map((p) => (
+          <div key={p.id}>
+            <label className="block text-sm font-medium text-text-body mb-2">
+              {p.label} API Key
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type={visible[p.id] ? "text" : "password"}
+                  value={keys[p.id as keyof typeof keys]}
+                  onChange={(e) =>
+                    setKeys((k) => ({ ...k, [p.id]: e.target.value }))
+                  }
+                  placeholder={p.placeholder}
+                  className="glass-input w-full px-4 py-2.5 rounded-lg text-text-hero text-sm focus:outline-none pr-10"
+                />
+                <button
+                  onClick={() => toggleVisible(p.id)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-body transition-colors"
+                >
+                  {visible[p.id] ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
-              <p className="text-sm text-[#B8BED8]">$99/month · 25 agents · 10 users · 50K executions</p>
+              <button className="neon-button px-4 py-2.5 rounded-lg text-sm font-medium">
+                Verify
+              </button>
             </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-[#6B7290]">Agents used</span>
-                <span className="text-white">6 / 25</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 rounded-lg bg-warn/10 border border-warn/20">
+        <p className="text-warn text-sm">
+          <strong>Security Note:</strong> API keys are encrypted at rest and never
+          exposed in client-side code.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function BillingTab() {
+  const plan = {
+    name: "Pro",
+    price: "$49",
+    period: "/month",
+    nextBilling: "May 15, 2026",
+    usage: {
+      executions: { used: 84723, limit: 100000, pct: 84.7 },
+      storage: { used: 2.4, limit: 10, pct: 24 },
+      agents: { used: 12, limit: 25, pct: 48 },
+    },
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Plan Card */}
+      <div className="glass-card p-6 rounded-xl">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-text-hero font-semibold mb-1">
+              Current Plan
+            </h3>
+            <p className="text-text-muted text-sm">
+              Your subscription details
+            </p>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-primary-cyan/15 border border-primary-cyan/30 text-primary-cyan text-xs font-semibold uppercase tracking-wider">
+            {plan.name}
+          </div>
+        </div>
+        <div className="flex items-baseline gap-1 mb-2">
+          <span className="text-3xl font-bold text-text-hero">
+            {plan.price}
+          </span>
+          <span className="text-text-muted text-sm">{plan.period}</span>
+        </div>
+        <p className="text-text-muted text-sm mb-4">
+          Next billing: {plan.nextBilling}
+        </p>
+        <button className="neon-purple px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2">
+          Upgrade to Enterprise
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Usage Stats */}
+      <div className="glass-card p-6 rounded-xl space-y-4">
+        <h3 className="text-text-hero font-semibold mb-1">Usage This Month</h3>
+
+        {Object.entries(plan.usage).map(([key, stat]) => (
+          <div key={key}>
+            <div className="flex justify-between text-sm mb-1.5">
+              <span className="text-text-body capitalize">{key}</span>
+              <span className="text-text-muted">
+                {key === "storage"
+                  ? `${stat.used}GB / ${stat.limit}GB`
+                  : `${stat.used.toLocaleString()} / ${stat.limit.toLocaleString()}`}
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${stat.pct}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className={`h-full rounded-full ${
+                  stat.pct > 90
+                    ? "bg-danger"
+                    : stat.pct > 70
+                      ? "bg-warn"
+                      : "bg-primary-cyan"
+                }`}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NotificationsTab() {
+  const [settings, setSettings] = useState({
+    emailAlerts: true,
+    emailReports: false,
+    inAppAlerts: true,
+    inAppMentions: true,
+    pushNotifications: false,
+    weeklyDigest: true,
+  });
+
+  const toggle = (key: keyof typeof settings) => {
+    setSettings((s) => ({ ...s, [key]: !s[key] }));
+  };
+
+  const items = [
+    { key: "emailAlerts", label: "Email Alerts", desc: "Critical system alerts and errors" },
+    { key: "emailReports", label: "Email Reports", desc: "Daily/weekly summary reports" },
+    { key: "inAppAlerts", label: "In-App Alerts", desc: "Real-time notifications in dashboard" },
+    { key: "inAppMentions", label: "Mentions", desc: "When someone mentions you" },
+    { key: "pushNotifications", label: "Push Notifications", desc: "Browser push for critical events" },
+    { key: "weeklyDigest", label: "Weekly Digest", desc: "Performance summary every Monday" },
+  ] as const;
+
+  return (
+    <div className="glass-card p-6 rounded-xl space-y-6">
+      <div>
+        <h3 className="text-text-hero font-semibold mb-1">
+          Notification Preferences
+        </h3>
+        <p className="text-text-muted text-sm">
+          Control how and when you receive updates
+        </p>
+      </div>
+
+      <div className="space-y-1">
+        {items.map((item) => (
+          <div
+            key={item.key}
+            className="flex items-center justify-between py-3 border-b border-white/5 last:border-0"
+          >
+            <div>
+              <p className="text-text-body text-sm font-medium">{item.label}</p>
+              <p className="text-text-muted text-xs">{item.desc}</p>
+            </div>
+            <button
+              onClick={() => toggle(item.key)}
+              className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${
+                settings[item.key] ? "bg-primary-cyan" : "bg-white/10"
+              }`}
+            >
+              <motion.div
+                animate={{
+                  x: settings[item.key] ? 22 : 2,
+                }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                className="absolute top-1 left-0 w-4 h-4 rounded-full bg-white shadow-lg"
+              />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SecurityTab() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [twoFA, setTwoFA] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <div className="space-y-6">
+      {/* Change Password */}
+      <div className="glass-card p-6 rounded-xl space-y-4">
+        <div>
+          <h3 className="text-text-hero font-semibold mb-1">
+            Change Password
+          </h3>
+          <p className="text-text-muted text-sm">
+            Update your account password
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-text-body mb-2">
+              New Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="glass-input w-full px-4 py-2.5 rounded-lg text-text-hero text-sm focus:outline-none pr-10"
+                placeholder="Enter new password"
+              />
+              <button
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-body"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-body mb-2">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="glass-input w-full px-4 py-2.5 rounded-lg text-text-hero text-sm focus:outline-none"
+              placeholder="Confirm new password"
+            />
+          </div>
+        </div>
+
+        <div className="pt-2 flex justify-end">
+          <button className="neon-button px-6 py-2.5 rounded-lg text-sm font-medium">
+            Update Password
+          </button>
+        </div>
+      </div>
+
+      {/* Two-Factor Auth */}
+      <div className="glass-card p-6 rounded-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-text-hero font-semibold mb-1">
+              Two-Factor Authentication
+            </h3>
+            <p className="text-text-muted text-sm">
+              Add an extra layer of security to your account
+            </p>
+          </div>
+          <button
+            onClick={() => setTwoFA(!twoFA)}
+            className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${
+              twoFA ? "bg-signal" : "bg-white/10"
+            }`}
+          >
+            <motion.div
+              animate={{ x: twoFA ? 22 : 2 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className="absolute top-1 left-0 w-4 h-4 rounded-full bg-white shadow-lg"
+            />
+          </button>
+        </div>
+
+        {twoFA && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="mt-4 p-4 rounded-lg bg-signal/10 border border-signal/20"
+          >
+            <div className="flex items-start gap-3">
+              <div className="p-1.5 rounded-full bg-signal/20 mt-0.5">
+                <Check className="w-4 h-4 text-signal" />
               </div>
-              <div className="h-2 rounded-full bg-white/[0.06]">
-                <div className="h-full rounded-full bg-[#00D4FF]" style={{ width: "24%" }} />
-              </div>
-              <div className="flex justify-between text-sm mt-2">
-                <span className="text-[#6B7290]">Users</span>
-                <span className="text-white">3 / 10</span>
-              </div>
-              <div className="h-2 rounded-full bg-white/[0.06]">
-                <div className="h-full rounded-full bg-[#B829DD]" style={{ width: "30%" }} />
+              <div>
+                <p className="text-signal text-sm font-medium">
+                  2FA Enabled
+                </p>
+                <p className="text-text-muted text-xs mt-1">
+                  Authenticator app configured. Recovery codes saved.
+                </p>
               </div>
             </div>
-          </GlassCard>
-        </TabsContent>
-      </Tabs>
-    </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Page ──────────────────────────────────────────────
+
+export default function SettingsPage() {
+  const tabs = [
+    {
+      id: "general",
+      label: "General",
+      icon: <Settings className="w-4 h-4" />,
+      content: <GeneralTab />,
+    },
+    {
+      id: "integrations",
+      label: "Integrations",
+      icon: <Plug className="w-4 h-4" />,
+      content: <IntegrationsTab />,
+    },
+    {
+      id: "billing",
+      label: "Billing",
+      icon: <CreditCard className="w-4 h-4" />,
+      content: <BillingTab />,
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: <Bell className="w-4 h-4" />,
+      content: <NotificationsTab />,
+    },
+    {
+      id: "security",
+      label: "Security",
+      icon: <Shield className="w-4 h-4" />,
+      content: <SecurityTab />,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl font-bold text-text-hero">Settings</h1>
+        <p className="text-text-muted text-sm mt-1">
+          Manage your workspace, integrations, and account preferences
+        </p>
+      </motion.div>
+
+      <SettingsTabs tabs={tabs} />
+    </div>
   );
 }
