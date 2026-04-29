@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuseIQ v3.0 — User Guide</title>
+<style>
+@page {
+  size: A4;
+  margin: 2cm;
+  @bottom-center {
+    content: counter(page);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    color: #6B7290;
+  }
+  @top-center {
+    content: "FuseIQ v3.0 — User Guide";
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px;
+    color: #4A5068;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #B8BED8;
+  background: #06070A;
+}
+
+.cover {
+  page: cover;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #06070A 0%, #0A0B10 50%, #0F111A 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 60px 40px;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(0,212,255,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(184,41,221,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.cover-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 20px;
+  color: #00D4FF;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  background: rgba(0,212,255,0.05);
+}
+
+.cover h1 {
+  font-size: 48px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.cover h1 span {
+  background: linear-gradient(135deg, #00D4FF 0%, #B829DD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover-subtitle {
+  font-size: 18px;
+  color: #B8BED8;
+  margin-bottom: 60px;
+  font-weight: 400;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.cover-meta-item {
+  text-align: center;
+}
+
+.cover-meta-label {
+  font-size: 10px;
+  color: #6B7290;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.cover-meta-value {
+  font-size: 14px;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.cover-footer {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: #4A5068;
+}
+
+.toc-page {
+  page: toc;
+  padding: 40px;
+}
+
+.toc-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #1E2233;
+}
+
+.toc-list {
+  list-style: none;
+}
+
+.toc-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(30, 34, 51, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.toc-list a {
+  color: #B8BED8;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.toc-list a:hover {
+  color: #00D4FF;
+}
+
+.toc-number {
+  color: #00D4FF;
+  font-weight: 600;
+  margin-right: 12px;
+  font-size: 12px;
+}
+
+.content {
+  padding: 0 40px 40px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #00D4FF;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #00D4FF;
+  margin-top: 30px;
+  margin-bottom: 12px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+p {
+  margin-bottom: 12px;
+  text-align: justify;
+}
+
+ul, ol {
+  margin-left: 20px;
+  margin-bottom: 16px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 10px;
+}
+
+th {
+  background: #0F111A;
+  color: #00D4FF;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #00D4FF;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1E2233;
+  color: #B8BED8;
+}
+
+tr:hover td {
+  background: rgba(0, 212, 255, 0.03);
+}
+
+code {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  background: #0F111A;
+  color: #00D4FF;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  border: 1px solid #1E2233;
+}
+
+pre {
+  background: #0A0B10;
+  border: 1px solid #1E2233;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #B8BED8;
+}
+
+.screenshot-placeholder {
+  background: linear-gradient(135deg, #0A0B10 0%, #0F111A 100%);
+  border: 2px dashed #1E2233;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  margin: 20px 0;
+  color: #4A5068;
+  font-size: 12px;
+}
+
+.screenshot-placeholder::before {
+  content: '📸';
+  display: block;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.tip-box {
+  background: rgba(0, 229, 160, 0.05);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.tip-box::before {
+  content: '💡 Tip: ';
+  color: #00E5A0;
+  font-weight: 600;
+}
+
+.warning-box {
+  background: rgba(255, 193, 87, 0.05);
+  border: 1px solid rgba(255, 193, 87, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.warning-box::before {
+  content: '⚠️ Note: ';
+  color: #FFC857;
+  font-weight: 600;
+}
+
+.status-online { color: #00E5A0; font-weight: 600; }
+.status-busy { color: #FFC857; font-weight: 600; }
+.status-offline { color: #FF4757; font-weight: 600; }
+
+.page-break {
+  break-after: page;
+}
+
+a { color: #00D4FF; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+kbd {
+  background: #0F111A;
+  border: 1px solid #1E2233;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: #B8BED8;
+}
+
+@media print {
+  body { background: #06070A; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">User Guide</div>
+  <h1>Fuse<span>IQ</span> v3.0</h1>
+  <div class="cover-subtitle">AI Agent Command Center — Complete User Guide</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Version</div>
+      <div class="cover-meta-value">3.0.0-alpha</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Phase</div>
+      <div class="cover-meta-value">2 — Intelligence Layer</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Date</div>
+      <div class="cover-meta-value">April 2026</div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    Abbasi Global Ltd · https://fuseiq.vercel.app · support@fuseiq.ai
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc-page">
+  <div class="toc-title">Table of Contents</div>
+  <ul class="toc-list">
+    <li><span class="toc-number">01</span> <a href="#welcome">Welcome to FuseIQ</a></li>
+    <li><span class="toc-number">02</span> <a href="#quickstart">Quick Start</a></li>
+    <li><span class="toc-number">03</span> <a href="#navigation">Navigation Guide</a></li>
+    <li><span class="toc-number">04</span> <a href="#commandcenter">Command Center Deep Dive</a></li>
+    <li><span class="toc-number">05</span> <a href="#staff">Staff Directory</a></li>
+    <li><span class="toc-number">06</span> <a href="#modes">Workspace Modes</a></li>
+    <li><span class="toc-number">07</span> <a href="#shortcuts">Keyboard Shortcuts</a></li>
+    <li><span class="toc-number">08</span> <a href="#copilot">Co-Pilot Commands</a></li>
+    <li><span class="toc-number">09</span> <a href="#billing">Account &amp; Billing</a></li>
+    <li><span class="toc-number">10</span> <a href="#settings">Settings</a></li>
+    <li><span class="toc-number">11</span> <a href="#troubleshooting">Troubleshooting</a></li>
+    <li><span class="toc-number">12</span> <a href="#help">Getting Help</a></li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<h2 id="welcome">01 — Welcome to FuseIQ</h2>
+
+<p>FuseIQ is your <strong>AI Agent Command Center</strong>. This guide will walk you through every feature and help you get the most out of your AI workforce.</p>
+
+<div class="highlight-box">
+  <p><strong>What is FuseIQ?</strong> A next-generation platform where humans and AI agents collaborate seamlessly. It provides real-time monitoring, workflow orchestration, cost tracking, and team management for AI-powered operations.</p>
+</div>
+
+<h2 id="quickstart">02 — Quick Start</h2>
+
+<h3>1. Access Your Dashboard</h3>
+<p>Navigate to <strong>https://fuseiq.vercel.app</strong> and sign in.</p>
+
+<div class="screenshot-placeholder">Screenshot: Login Page<br><em>Replace with actual screenshot</em></div>
+
+<h3>2. Explore the Command Center</h3>
+<p>The home screen gives you a real-time overview of everything happening in your workspace.</p>
+
+<div class="screenshot-placeholder">Screenshot: Command Center Dashboard<br><em>Replace with actual screenshot</em></div>
+
+<h3>3. Switch Workspace Modes</h3>
+<p>Toggle between <strong>AI</strong>, <strong>Human</strong>, or <strong>Hybrid</strong> mode using the control at the bottom of the sidebar.</p>
+
+<div class="screenshot-placeholder">Screenshot: Mode Toggle<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="navigation">03 — Navigation Guide</h2>
+
+<h3>Sidebar Menu</h3>
+
+<table>
+  <tr><th>Page</th><th>What You'll Find</th></tr>
+  <tr><td><strong>Command Center</strong></td><td>Dashboard home with KPIs, live agents, approvals, activity</td></tr>
+  <tr><td><strong>Staff Directory</strong></td><td>All AI agents and human team members</td></tr>
+  <tr><td><strong>Communications</strong></td><td>Team chat channels and agent messaging</td></tr>
+  <tr><td><strong>Agent Forge</strong></td><td>Create, configure, and manage AI agents</td></tr>
+  <tr><td><strong>Operations</strong></td><td>Kanban task board for your team</td></tr>
+  <tr><td><strong>Approvals</strong></td><td>Review and approve high-risk agent actions</td></tr>
+  <tr><td><strong>Analytics</strong></td><td>Charts, reports, and performance metrics</td></tr>
+  <tr><td><strong>Swarm Canvas</strong></td><td>Visual workflow builder for multi-agent orchestration</td></tr>
+  <tr><td><strong>Simulator</strong></td><td>Test agents before deployment</td></tr>
+  <tr><td><strong>Co-Pilot</strong></td><td>AI assistant for quick actions and commands</td></tr>
+  <tr><td><strong>Marketplace</strong></td><td>Browse and install pre-built agents</td></tr>
+  <tr><td><strong>Team</strong></td><td>Human team management and roles</td></tr>
+  <tr><td><strong>Billing</strong></td><td>Usage, invoices, and subscription management</td></tr>
+  <tr><td><strong>Audit Log</strong></td><td>Complete activity history for compliance</td></tr>
+  <tr><td><strong>Settings</strong></td><td>Workspace preferences and integrations</td></tr>
+</table>
+
+<div class="screenshot-placeholder">Screenshot: Sidebar Navigation<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="commandcenter">04 — Command Center Deep Dive</h2>
+
+<h3>KPI Cards (Top Row)</h3>
+<p>Four live cards showing:</p>
+<ul>
+  <li><strong>Active Agents</strong> — How many agents are online right now</li>
+  <li><strong>Executions Today</strong> — Total agent runs since midnight UTC</li>
+  <li><strong>Success Rate</strong> — Percentage of successful executions</li>
+  <li><strong>Avg Cost / Run</strong> — Average spend per execution</li>
+</ul>
+
+<div class="tip-box">Click any card to see historical trends and breakdowns.</div>
+
+<div class="screenshot-placeholder">Screenshot: KPI Cards<br><em>Replace with actual screenshot</em></div>
+
+<h3>Active Agents Panel</h3>
+<p>Shows all currently active agents with:</p>
+<ul>
+  <li><strong>Avatar</strong> — Initial letter with gradient background</li>
+  <li><strong>Status Dot</strong> — <span class="status-online">● Green</span> (online), <span class="status-busy">● Orange</span> (busy), <span class="status-offline">● Red</span> (offline)</li>
+  <li><strong>Name &amp; Type</strong> — AI agents show framework badge (Kimi, OpenAI, etc.)</li>
+  <li><strong>Efficiency Score</strong> — Performance rating (0-100%)</li>
+  <li><strong>Executions</strong> — Total runs today</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Active Agents Panel<br><em>Replace with actual screenshot</em></div>
+
+<h3>Execution Trends Chart</h3>
+<p>Visual bar chart showing execution volume over time.</p>
+
+<table>
+  <tr><th>Period</th><th>Granularity</th></tr>
+  <tr><td><strong>1H</strong></td><td>Last hour, minute-by-minute</td></tr>
+  <tr><td><strong>24H</strong></td><td>Last 24 hours, hourly</td></tr>
+  <tr><td><strong>7D</strong></td><td>Last week, daily</td></tr>
+  <tr><td><strong>30D</strong></td><td>Last month, daily</td></tr>
+</table>
+
+<div class="screenshot-placeholder">Screenshot: Execution Trends Chart<br><em>Replace with actual screenshot</em></div>
+
+<h3>Pending Approvals</h3>
+<p>When an agent wants to perform a high-risk action, it appears here:</p>
+
+<table>
+  <tr><th>Risk Level</th><th>Color</th><th>Typical Action</th></tr>
+  <tr><td><strong>Low</strong></td><td class="status-online">Green</td><td>Bulk close tickets, send routine emails</td></tr>
+  <tr><td><strong>Medium</strong></td><td class="status-busy">Yellow</td><td>Merge PRs, publish content</td></tr>
+  <tr><td><strong>High</strong></td><td class="status-offline">Red</td><td>Deploy campaigns, delete data, send to 50K+ users</td></tr>
+</table>
+
+<p><strong>To approve:</strong> Click the green <strong>Approve</strong> button<br>
+<strong>To reject:</strong> Click the red <strong>Reject</strong> button</p>
+
+<div class="screenshot-placeholder">Screenshot: Pending Approvals<br><em>Replace with actual screenshot</em></div>
+
+<h3>Activity Feed</h3>
+<p>Real-time stream of everything happening:</p>
+<ul>
+  <li><span class="status-online">●</span> <strong>Success</strong> — Agent completed a task</li>
+  <li><span style="color: #00D4FF;">●</span> <strong>Info</strong> — Agent started working</li>
+  <li><span class="status-busy">●</span> <strong>Warning</strong> — Approval requested</li>
+  <li><span class="status-offline">●</span> <strong>Error</strong> — Agent failed, manual intervention needed</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Activity Feed<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="staff">05 — Staff Directory</h2>
+
+<h3>Viewing Team Members</h3>
+<ol>
+  <li>Click <strong>Staff Directory</strong> in the sidebar</li>
+  <li>Browse the grid of all AI agents and humans</li>
+  <li>Use filters to narrow by:
+    <ul>
+      <li>Department (Engineering, Product, Marketing, Support)</li>
+      <li>Status (Online, Away, Busy, Offline)</li>
+      <li>Type (AI or Human)</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="screenshot-placeholder">Screenshot: Staff Directory Grid<br><em>Replace with actual screenshot</em></div>
+
+<h3>Agent Profiles</h3>
+<p>Click any agent to see:</p>
+<ul>
+  <li>Full role and department</li>
+  <li>Provider/framework (Kimi, OpenAI, etc.)</li>
+  <li>Efficiency history</li>
+  <li>Recent executions</li>
+  <li>Cost breakdown</li>
+  <li>Assigned tasks</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Agent Profile Modal<br><em>Replace with actual screenshot</em></div>
+
+<h3>Human Profiles</h3>
+<p>Click any human to see:</p>
+<ul>
+  <li>Role and department</li>
+  <li>Timezone</li>
+  <li>Current workload</li>
+  <li>Assigned tasks</li>
+  <li>Collaboration history</li>
+</ul>
+
+<h2 id="modes">06 — Workspace Modes</h2>
+
+<h3>AI Mode (Cyan)</h3>
+<ul>
+  <li>Optimized for managing AI agents</li>
+  <li>Quick deploy buttons visible</li>
+  <li>Agent performance front and center</li>
+  <li>Cost tracking prominent</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: AI Mode Interface<br><em>Replace with actual screenshot</em></div>
+
+<h3>Human Mode (Orange)</h3>
+<ul>
+  <li>Focus on human team collaboration</li>
+  <li>Task assignments highlighted</li>
+  <li>Communication tools prominent</li>
+  <li>Meeting schedules visible</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Human Mode Interface<br><em>Replace with actual screenshot</em></div>
+
+<h3>Hybrid Mode (Purple)</h3>
+<ul>
+  <li>Balanced view of both AI and human activity</li>
+  <li>Collaboration metrics</li>
+  <li>Human-AI handoff tracking</li>
+  <li>Combined productivity scores</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Hybrid Mode Interface<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="shortcuts">07 — Keyboard Shortcuts</h2>
+
+<table>
+  <tr><th>Shortcut</th><th>Action</th></tr>
+  <tr><td><kbd>⌘</kbd> + <kbd>K</kbd></td><td>Open Co-Pilot command palette</td></tr>
+  <tr><td><kbd>⌘</kbd> + <kbd>B</kbd></td><td>Toggle sidebar collapse/expand</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Close any modal or dropdown</td></tr>
+  <tr><td><kbd>⌘</kbd> + <kbd>/</kbd></td><td>Show keyboard shortcut help</td></tr>
+  <tr><td><kbd>Shift</kbd> + <kbd>?</kbd></td><td>Open quick help panel</td></tr>
+</table>
+
+<h2 id="copilot">08 — Co-Pilot Commands</h2>
+
+<p>When you press <kbd>⌘</kbd> + <kbd>K</kbd>, Co-Pilot opens. Try these commands:</p>
+
+<table>
+  <tr><th>Command</th><th>What It Does</th></tr>
+  <tr><td><code>Deploy agent</code></td><td>Start agent creation wizard</td></tr>
+  <tr><td><code>View analytics</code></td><td>Jump to analytics page</td></tr>
+  <tr><td><code>Create task</code></td><td>Open new task form</td></tr>
+  <tr><td><code>Approve all</code></td><td>Bulk approve pending items</td></tr>
+  <tr><td><code>Show costs</code></td><td>Display cost breakdown</td></tr>
+  <tr><td><code>Switch to AI mode</code></td><td>Change workspace mode</td></tr>
+  <tr><td><code>Find [name]</code></td><td>Search for agent or person</td></tr>
+  <tr><td><code>Run workflow [name]</code></td><td>Execute a saved workflow</td></tr>
+</table>
+
+<div class="screenshot-placeholder">Screenshot: Co-Pilot Command Palette<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="billing">09 — Account &amp; Billing</h2>
+
+<h3>Viewing Your Plan</h3>
+<ol>
+  <li>Click your avatar (top right)</li>
+  <li>Select <strong>Billing</strong></li>
+  <li>See current plan, usage, and next billing date</li>
+</ol>
+
+<h3>Upgrading Your Plan</h3>
+<ol>
+  <li>Go to <strong>Billing</strong> page</li>
+  <li>Click <strong>Change Plan</strong></li>
+  <li>Select Professional or Enterprise</li>
+  <li>Enter payment details via Stripe</li>
+</ol>
+
+<h3>Usage Limits</h3>
+
+<table>
+  <tr><th>Plan</th><th>Agents</th><th>Executions/Month</th><th>Users</th></tr>
+  <tr><td><strong>Starter</strong></td><td>5</td><td>1,000</td><td>3</td></tr>
+  <tr><td><strong>Professional</strong></td><td>25</td><td>10,000</td><td>10</td></tr>
+  <tr><td><strong>Enterprise</strong></td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+</table>
+
+<div class="screenshot-placeholder">Screenshot: Billing Page<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="settings">10 — Settings</h2>
+
+<h3>Workspace Settings</h3>
+<ul>
+  <li><strong>Name</strong> — Your workspace display name</li>
+  <li><strong>Timezone</strong> — Default timezone for scheduling</li>
+  <li><strong>Theme</strong> — Auto, Dark, or Light</li>
+  <li><strong>Notifications</strong> — Email, in-app, or both</li>
+</ul>
+
+<h3>Integrations</h3>
+<p>Connect external services:</p>
+<ul>
+  <li><strong>OpenAI</strong> — GPT-4, GPT-3.5</li>
+  <li><strong>Kimi</strong> — Claude models</li>
+  <li><strong>GitHub</strong> — Code review automation</li>
+  <li><strong>Slack</strong> — Team notifications</li>
+  <li><strong>Airtable</strong> — Data sync</li>
+</ul>
+
+<h3>API Keys</h3>
+<ul>
+  <li>View and regenerate your workspace API key</li>
+  <li>Set up provider keys (encrypted at rest)</li>
+  <li>Configure webhooks for external systems</li>
+</ul>
+
+<div class="screenshot-placeholder">Screenshot: Settings Page<br><em>Replace with actual screenshot</em></div>
+
+<h2 id="troubleshooting">11 — Troubleshooting</h2>
+
+<h3>Agent Shows "Offline"</h3>
+<ol>
+  <li>Check provider API key in Settings &gt; Integrations</li>
+  <li>Verify the agent's framework configuration</li>
+  <li>Review the agent logs in Agent Forge</li>
+  <li>Contact support if persistent</li>
+</ol>
+
+<h3>High Costs</h3>
+<ol>
+  <li>Check Analytics &gt; Cost Breakdown</li>
+  <li>Identify expensive agents</li>
+  <li>Adjust model selection (GPT-4 → GPT-3.5 for simple tasks)</li>
+  <li>Set cost alerts in Billing</li>
+</ol>
+
+<h3>Approval Not Working</h3>
+<ol>
+  <li>Ensure you have Manager or Director role</li>
+  <li>Check the approval risk level matches your permissions</li>
+  <li>Verify you're in the correct workspace</li>
+</ol>
+
+<div class="warning-box">If issues persist, check the <a href="#help">Getting Help</a> section below.</div>
+
+<h2 id="help">12 — Getting Help</h2>
+
+<h3>In-App Support</h3>
+<ol>
+  <li>Click <strong>?</strong> icon in header</li>
+  <li>Search help articles</li>
+  <li>Or click <strong>Contact Support</strong> to send a message</li>
+</ol>
+
+<h3>Email</h3>
+<p><strong>support@fuseiq.ai</strong> — Response within 24 hours</p>
+
+<h3>Community</h3>
+<ul>
+  <li><strong>Discord:</strong> https://discord.gg/fuseiq</li>
+  <li><strong>Twitter/X:</strong> @fuseiq</li>
+  <li><strong>GitHub Discussions:</strong> github.com/abbasi8586/fuseiq/discussions</li>
+</ul>
+
+<hr>
+
+<p style="text-align: center; color: #4A5068; font-size: 10px; margin-top: 40px;">
+  <strong>FuseIQ v3.0</strong> · User Guide · Abbasi Global Ltd · April 2026<br>
+  https://fuseiq.vercel.app · support@fuseiq.ai
+</p>
+
+</div>
+
+</body>
+</html>

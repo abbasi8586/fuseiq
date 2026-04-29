@@ -5,7 +5,7 @@
 **Launch FuseIQ v3.0 as the definitive operating system for AI-native teams, achieving 500 signups, 100 active workspaces, and $5,000 MRR within 90 days of public launch.**
 
 **Headquarters:** Florida, USA  
-**Legal Entity:** Abbasi Global LLC  
+**Legal Entity:** Abbasi Global LTD  
 **Currency:** USD
 
 ---
