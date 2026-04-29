@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: "The AI agent command center that puts you in control",
 };
 
+import { CommandPalette } from "@/components/copilot/command-palette";
+
 export default function RootLayout({
   children,
 }: {
@@ -21,6 +23,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased bg-[#06070A] text-white min-h-screen`}>
         <TooltipProvider>
           {children}
+          <CommandPalette />
           <Toaster 
             position="top-right"
             toastOptions={{
