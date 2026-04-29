@@ -1,9 +1,7 @@
-import { createServerClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { StaffDirectoryClient } from "./client";
 
 export default async function StaffDirectoryPage() {
-  const supabase = createServerClient();
-  
   const { data: agents, error } = await supabase
     .from('agents')
     .select('*')
