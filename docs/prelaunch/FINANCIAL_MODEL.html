@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>FINANCIAL_MODEL</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/dev/null" />
+</head>
+<body>
+<h1 id="fuseiq-v3.0-financial-model">FuseIQ v3.0 — Financial Model</h1>
+<p><strong>Abbasi Global LLC | Florida, USA | April 2026</strong></p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>This financial model presents a conservative 3-year forecast for
+FuseIQ, an AI agent orchestration platform targeting mid-market and
+enterprise teams. The model is based on current beta traction, market
+research, and comparable SaaS metrics in the AI infrastructure
+space.</p>
+<p><strong>Key Financial Highlights:</strong> - <strong>Seed
+Round</strong>: $500,000 at $3M SAFE cap - <strong>Year 1 ARR
+Target</strong>: $240,000 - <strong>Year 3 ARR Target</strong>:
+$4,800,000 - <strong>Break-even</strong>: Month 28 (end of Year 2) -
+<strong>Gross Margin</strong>: 75-82% (software + cloud
+infrastructure)</p>
+<hr />
+<h2 id="revenue-projections-3-year">Revenue Projections (3-Year)</h2>
+<h3 id="annual-recurring-revenue-arr">Annual Recurring Revenue
+(ARR)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Total ARR</strong></td>
+<td>$240,000</td>
+<td>$1,200,000</td>
+<td>$4,800,000</td>
+</tr>
+<tr>
+<td><strong>QoQ Growth</strong></td>
+<td>—</td>
+<td>25% avg</td>
+<td>20% avg</td>
+</tr>
+<tr>
+<td><strong>New ARR</strong></td>
+<td>$240,000</td>
+<td>$960,000</td>
+<td>$3,600,000</td>
+</tr>
+<tr>
+<td><strong>Expansion ARR</strong></td>
+<td>$0</td>
+<td>$120,000</td>
+<td>$480,000</td>
+</tr>
+<tr>
+<td><strong>Churned ARR</strong></td>
+<td>$0</td>
+<td>($120,000)</td>
+<td>($480,000)</td>
+</tr>
+<tr>
+<td><strong>Net Revenue Retention</strong></td>
+<td>—</td>
+<td>110%</td>
+<td>110%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="customer-count-mix">Customer Count &amp; Mix</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Total Customers</strong></td>
+<td>100</td>
+<td>450</td>
+<td>1,500</td>
+</tr>
+<tr>
+<td><strong>Starter (Free)</strong></td>
+<td>70</td>
+<td>250</td>
+<td>800</td>
+</tr>
+<tr>
+<td><strong>Pro ($49/user)</strong></td>
+<td>25</td>
+<td>170</td>
+<td>600</td>
+</tr>
+<tr>
+<td><strong>Enterprise ($500+/mo)</strong></td>
+<td>5</td>
+<td>30</td>
+<td>100</td>
+</tr>
+<tr>
+<td><strong>New Customers/Month</strong></td>
+<td>8</td>
+<td>30</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<h3 id="average-revenue-per-customer-arpu">Average Revenue Per Customer
+(ARPU)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Blended ARPU</strong></td>
+<td>$2,400</td>
+<td>$2,667</td>
+<td>$3,200</td>
+</tr>
+<tr>
+<td><strong>Pro ARPU</strong></td>
+<td>$588</td>
+<td>$735</td>
+<td>$882</td>
+</tr>
+<tr>
+<td><strong>Enterprise ARPU</strong></td>
+<td>$6,000</td>
+<td>$8,400</td>
+<td>$12,000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monthly-recurring-revenue-mrr-build">Monthly Recurring Revenue
+(MRR) Build</h3>
+<h4 id="year-1-mrr-ramp">Year 1 MRR Ramp</h4>
+<table>
+<thead>
+<tr>
+<th>Quarter</th>
+<th>Starting MRR</th>
+<th>New MRR</th>
+<th>Churn</th>
+<th>Expansion</th>
+<th>Ending MRR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>$0</td>
+<td>$10,000</td>
+<td>$0</td>
+<td>$0</td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>$10,000</td>
+<td>$15,000</td>
+<td>$500</td>
+<td>$1,000</td>
+<td>$25,500</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>$25,500</td>
+<td>$20,000</td>
+<td>$1,500</td>
+<td>$3,000</td>
+<td>$47,000</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>$47,000</td>
+<td>$25,000</td>
+<td>$3,000</td>
+<td>$5,000</td>
+<td>$74,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Year 1 Ending MRR</strong>: $74,000 (≈ $240,000 ARR with
+annual contracts)</p>
+<h4 id="year-2-mrr-ramp">Year 2 MRR Ramp</h4>
+<table>
+<thead>
+<tr>
+<th>Quarter</th>
+<th>Starting MRR</th>
+<th>New MRR</th>
+<th>Churn</th>
+<th>Expansion</th>
+<th>Ending MRR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>$74,000</td>
+<td>$35,000</td>
+<td>$5,000</td>
+<td>$8,000</td>
+<td>$112,000</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>$112,000</td>
+<td>$45,000</td>
+<td>$8,000</td>
+<td>$12,000</td>
+<td>$161,000</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>$161,000</td>
+<td>$55,000</td>
+<td>$12,000</td>
+<td>$18,000</td>
+<td>$222,000</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>$222,000</td>
+<td>$65,000</td>
+<td>$18,000</td>
+<td>$25,000</td>
+<td>$294,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Year 2 Ending MRR</strong>: $294,000 (≈ $1,200,000 ARR)</p>
+<h4 id="year-3-mrr-ramp">Year 3 MRR Ramp</h4>
+<table>
+<thead>
+<tr>
+<th>Quarter</th>
+<th>Starting MRR</th>
+<th>New MRR</th>
+<th>Churn</th>
+<th>Expansion</th>
+<th>Ending MRR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>$294,000</td>
+<td>$80,000</td>
+<td>$25,000</td>
+<td>$35,000</td>
+<td>$384,000</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>$384,000</td>
+<td>$100,000</td>
+<td>$35,000</td>
+<td>$50,000</td>
+<td>$499,000</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>$499,000</td>
+<td>$120,000</td>
+<td>$50,000</td>
+<td>$70,000</td>
+<td>$639,000</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>$639,000</td>
+<td>$140,000</td>
+<td>$70,000</td>
+<td>$90,000</td>
+<td>$799,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Year 3 Ending MRR</strong>: $799,000 (≈ $4,800,000 ARR with
+annual prepay)</p>
+<hr />
+<h2 id="unit-economics">Unit Economics</h2>
+<h3 id="customer-acquisition-cost-cac">Customer Acquisition Cost
+(CAC)</h3>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organic/Content</strong></td>
+<td>$500</td>
+<td>$400</td>
+<td>$350</td>
+</tr>
+<tr>
+<td><strong>Paid Social</strong></td>
+<td>$2,000</td>
+<td>$1,800</td>
+<td>$1,500</td>
+</tr>
+<tr>
+<td><strong>Enterprise Sales</strong></td>
+<td>$5,000</td>
+<td>$4,000</td>
+<td>$3,500</td>
+</tr>
+<tr>
+<td><strong>Blended CAC</strong></td>
+<td>$2,000</td>
+<td>$2,500</td>
+<td>$2,500</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lifetime-value-ltv">Lifetime Value (LTV)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Avg. Revenue Per Account</strong></td>
+<td>$2,400</td>
+<td>$2,667</td>
+<td>$3,200</td>
+</tr>
+<tr>
+<td><strong>Gross Margin</strong></td>
+<td>75%</td>
+<td>80%</td>
+<td>82%</td>
+</tr>
+<tr>
+<td><strong>Gross Margin $</strong></td>
+<td>$1,800</td>
+<td>$2,133</td>
+<td>$2,624</td>
+</tr>
+<tr>
+<td><strong>Monthly Churn Rate</strong></td>
+<td>5%</td>
+<td>4%</td>
+<td>3.5%</td>
+</tr>
+<tr>
+<td><strong>Customer Lifetime (months)</strong></td>
+<td>20</td>
+<td>25</td>
+<td>29</td>
+</tr>
+<tr>
+<td><strong>LTV</strong></td>
+<td>$9,000</td>
+<td>$13,333</td>
+<td>$18,000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ltvcac-ratio">LTV:CAC Ratio</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LTV</strong></td>
+<td>$9,000</td>
+<td>$13,333</td>
+<td>$18,000</td>
+</tr>
+<tr>
+<td><strong>CAC</strong></td>
+<td>$2,000</td>
+<td>$2,500</td>
+<td>$2,500</td>
+</tr>
+<tr>
+<td><strong>LTV:CAC</strong></td>
+<td>4.5x</td>
+<td>5.3x</td>
+<td>7.2x</td>
+</tr>
+<tr>
+<td><strong>Payback Period (months)</strong></td>
+<td>13</td>
+<td>14</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Target</strong>: LTV:CAC &gt; 3x (achieved from Year 1)
+<strong>Target</strong>: Payback Period &lt; 18 months (achieved from
+Year 1)</p>
+<h3 id="churn-analysis">Churn Analysis</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Monthly Logo Churn</strong></td>
+<td>5%</td>
+<td>4%</td>
+<td>3.5%</td>
+</tr>
+<tr>
+<td><strong>Annual Logo Churn</strong></td>
+<td>46%</td>
+<td>39%</td>
+<td>35%</td>
+</tr>
+<tr>
+<td><strong>Revenue Churn</strong></td>
+<td>3%</td>
+<td>2.5%</td>
+<td>2%</td>
+</tr>
+<tr>
+<td><strong>Net Revenue Retention</strong></td>
+<td>105%</td>
+<td>110%</td>
+<td>115%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Churn Reduction Drivers:</strong> - Year 1: High churn
+expected (free tier conversions, product-market fit refinement) - Year
+2: Improved onboarding, better product-market fit - Year 3: Enterprise
+focus (lower churn), expansion revenue</p>
+<hr />
+<h2 id="cost-structure">Cost Structure</h2>
+<h3 id="operating-expenses-monthly">Operating Expenses (Monthly)</h3>
+<h4 id="year-1">Year 1</h4>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Monthly</th>
+<th>Annual</th>
+<th>% of Revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product &amp; Engineering</strong></td>
+<td>$25,000</td>
+<td>$300,000</td>
+<td>125%</td>
+</tr>
+<tr>
+<td><strong>Sales &amp; Marketing</strong></td>
+<td>$5,000</td>
+<td>$60,000</td>
+<td>25%</td>
+</tr>
+<tr>
+<td><strong>General &amp; Administrative</strong></td>
+<td>$3,333</td>
+<td>$40,000</td>
+<td>17%</td>
+</tr>
+<tr>
+<td><strong>Total OpEx</strong></td>
+<td>$33,333</td>
+<td>$400,000</td>
+<td>167%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="year-2">Year 2</h4>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Monthly</th>
+<th>Annual</th>
+<th>% of Revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product &amp; Engineering</strong></td>
+<td>$35,000</td>
+<td>$420,000</td>
+<td>35%</td>
+</tr>
+<tr>
+<td><strong>Sales &amp; Marketing</strong></td>
+<td>$10,000</td>
+<td>$120,000</td>
+<td>10%</td>
+</tr>
+<tr>
+<td><strong>General &amp; Administrative</strong></td>
+<td>$5,000</td>
+<td>$60,000</td>
+<td>5%</td>
+</tr>
+<tr>
+<td><strong>Total OpEx</strong></td>
+<td>$50,000</td>
+<td>$600,000</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="year-3">Year 3</h4>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Monthly</th>
+<th>Annual</th>
+<th>% of Revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product &amp; Engineering</strong></td>
+<td>$45,000</td>
+<td>$540,000</td>
+<td>11%</td>
+</tr>
+<tr>
+<td><strong>Sales &amp; Marketing</strong></td>
+<td>$15,000</td>
+<td>$180,000</td>
+<td>4%</td>
+</tr>
+<tr>
+<td><strong>General &amp; Administrative</strong></td>
+<td>$6,667</td>
+<td>$80,000</td>
+<td>2%</td>
+</tr>
+<tr>
+<td><strong>Total OpEx</strong></td>
+<td>$66,667</td>
+<td>$800,000</td>
+<td>17%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="headcount-plan">Headcount Plan</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CEO/Founder</strong></td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Engineering</strong></td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr>
+<td><strong>Product/Design</strong></td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td><strong>Sales</strong></td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td><strong>Marketing</strong></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Customer Success</strong></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Total Team</strong></td>
+<td>3</td>
+<td>7</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Salary Assumptions (Florida-based, competitive):</strong> -
+Senior Engineer: $120,000/year - Product Manager: $110,000/year - Sales
+Rep: $80,000 base + $40,000 OTE - Marketing: $80,000/year - Customer
+Success: $70,000/year</p>
+<h3 id="infrastructure-costs">Infrastructure Costs</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cloud Infrastructure</strong></td>
+<td>$12,000</td>
+<td>$36,000</td>
+<td>$96,000</td>
+</tr>
+<tr>
+<td><strong>AI Model API Costs</strong></td>
+<td>$18,000</td>
+<td>$60,000</td>
+<td>$180,000</td>
+</tr>
+<tr>
+<td><strong>Third-Party Tools</strong></td>
+<td>$6,000</td>
+<td>$12,000</td>
+<td>$24,000</td>
+</tr>
+<tr>
+<td><strong>Total COGS</strong></td>
+<td>$36,000</td>
+<td>$108,000</td>
+<td>$300,000</td>
+</tr>
+<tr>
+<td><strong>Gross Margin</strong></td>
+<td>75%</td>
+<td>80%</td>
+<td>82%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Infrastructure Scaling Assumptions:</strong> - Year 1: 100
+customers, light usage - Year 2: 450 customers, moderate usage - Year 3:
+1,500 customers, heavy usage + enterprise workloads</p>
+<hr />
+<h2 id="break-even-analysis">Break-Even Analysis</h2>
+<h3 id="monthly-pl-progression">Monthly P&amp;L Progression</h3>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 7%" />
+<col style="width: 12%" />
+<col style="width: 8%" />
+<col style="width: 19%" />
+<col style="width: 8%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Month</th>
+<th>MRR</th>
+<th>Revenue</th>
+<th>COGS</th>
+<th>Gross Profit</th>
+<th>OpEx</th>
+<th>Net Income</th>
+<th>Cumulative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$2,000</td>
+<td>$2,000</td>
+<td>$600</td>
+<td>$1,400</td>
+<td>$33,333</td>
+<td>($31,933)</td>
+<td>($31,933)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>$8,000</td>
+<td>$8,000</td>
+<td>$2,400</td>
+<td>$5,600</td>
+<td>$33,333</td>
+<td>($27,733)</td>
+<td>($179,598)</td>
+</tr>
+<tr>
+<td>12</td>
+<td>$20,000</td>
+<td>$20,000</td>
+<td>$6,000</td>
+<td>$14,000</td>
+<td>$33,333</td>
+<td>($19,333)</td>
+<td>($335,998)</td>
+</tr>
+<tr>
+<td>18</td>
+<td>$45,000</td>
+<td>$45,000</td>
+<td>$13,500</td>
+<td>$31,500</td>
+<td>$40,000</td>
+<td>($8,500)</td>
+<td>($455,498)</td>
+</tr>
+<tr>
+<td>24</td>
+<td>$100,000</td>
+<td>$100,000</td>
+<td>$25,000</td>
+<td>$75,000</td>
+<td>$50,000</td>
+<td>$25,000</td>
+<td>($430,498)</td>
+</tr>
+<tr>
+<td>30</td>
+<td>$180,000</td>
+<td>$180,000</td>
+<td>$40,000</td>
+<td>$140,000</td>
+<td>$55,000</td>
+<td>$85,000</td>
+<td>($195,498)</td>
+</tr>
+<tr>
+<td>36</td>
+<td>$300,000</td>
+<td>$300,000</td>
+<td>$54,000</td>
+<td>$246,000</td>
+<td>$66,667</td>
+<td>$179,333</td>
+<td>$394,502</td>
+</tr>
+</tbody>
+</table>
+<h3 id="break-even-point">Break-Even Point</h3>
+<p><strong>Operational Break-Even</strong>: Month 28 (April 2028) - MRR:
+$100,000 - Annual run rate: $1,200,000 - Team size: 8 people</p>
+<p><strong>Cumulative Cash Break-Even</strong>: Month 34 (October 2028)
+- Total investment required: ~$600,000 - Includes seed round + bridge if
+needed</p>
+<hr />
+<h2 id="cash-flow-projections">Cash Flow Projections</h2>
+<h3 id="year-cash-summary">3-Year Cash Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Starting Cash</strong></td>
+<td>$500,000</td>
+<td>$160,000</td>
+<td>$160,000</td>
+</tr>
+<tr>
+<td><strong>Revenue</strong></td>
+<td>$240,000</td>
+<td>$1,200,000</td>
+<td>$4,800,000</td>
+</tr>
+<tr>
+<td><strong>COGS</strong></td>
+<td>($60,000)</td>
+<td>($240,000)</td>
+<td>($864,000)</td>
+</tr>
+<tr>
+<td><strong>Gross Profit</strong></td>
+<td>$180,000</td>
+<td>$960,000</td>
+<td>$3,936,000</td>
+</tr>
+<tr>
+<td><strong>OpEx</strong></td>
+<td>($400,000)</td>
+<td>($600,000)</td>
+<td>($800,000)</td>
+</tr>
+<tr>
+<td><strong>Net Income</strong></td>
+<td>($220,000)</td>
+<td>$360,000</td>
+<td>$3,136,000</td>
+</tr>
+<tr>
+<td><strong>Ending Cash</strong></td>
+<td>$160,000</td>
+<td>$160,000</td>
+<td>$3,296,000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cash-flow-scenarios">Cash Flow Scenarios</h3>
+<h4 id="conservative-80-of-base-case">Conservative (80% of base
+case)</h4>
+<ul>
+<li>Year 1 ARR: $192,000</li>
+<li>Break-even: Month 32</li>
+<li>Additional capital needed: $200,000 bridge</li>
+</ul>
+<h4 id="optimistic-150-of-base-case">Optimistic (150% of base case)</h4>
+<ul>
+<li>Year 1 ARR: $360,000</li>
+<li>Break-even: Month 20</li>
+<li>No additional capital needed</li>
+</ul>
+<h4 id="worst-case-50-of-base-case">Worst Case (50% of base case)</h4>
+<ul>
+<li>Year 1 ARR: $120,000</li>
+<li>Break-even: Month 40</li>
+<li>Additional capital needed: $400,000 bridge or downsize</li>
+</ul>
+<hr />
+<h2 id="funding-requirements">Funding Requirements</h2>
+<h3 id="seed-round-500000">Seed Round: $500,000</h3>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 23%" />
+<col style="width: 8%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>Use of Funds</th>
+<th>Amount</th>
+<th>%</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product &amp; Engineering</strong></td>
+<td>$250,000</td>
+<td>50%</td>
+<td>Phase 2-3 development, hiring 2 engineers</td>
+</tr>
+<tr>
+<td><strong>Sales &amp; Marketing</strong></td>
+<td>$125,000</td>
+<td>25%</td>
+<td>GTM execution, content, paid acquisition</td>
+</tr>
+<tr>
+<td><strong>Operations &amp; Legal</strong></td>
+<td>$75,000</td>
+<td>15%</td>
+<td>Incorporation, contracts, compliance, tools</td>
+</tr>
+<tr>
+<td><strong>Reserve</strong></td>
+<td>$50,000</td>
+<td>10%</td>
+<td>Contingency, unexpected opportunities</td>
+</tr>
+</tbody>
+</table>
+<h3 id="funding-milestones">Funding Milestones</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 27%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Target Date</th>
+<th>Trigger for Next Round</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Seed Close</strong></td>
+<td>Q3 2026</td>
+<td>$500K at $3M cap</td>
+</tr>
+<tr>
+<td><strong>Seed Extension</strong></td>
+<td>Q2 2027 (if needed)</td>
+<td>$200-400K bridge</td>
+</tr>
+<tr>
+<td><strong>Series A</strong></td>
+<td>Q4 2027 / Q1 2028</td>
+<td>$2-3M at $8-12M valuation</td>
+</tr>
+<tr>
+<td><strong>Series A Triggers</strong></td>
+<td></td>
+<td>$1.5M ARR, 50+ enterprise customers, 120% NRR</td>
+</tr>
+</tbody>
+</table>
+<h3 id="capital-efficiency-metrics">Capital Efficiency Metrics</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Capital Consumed to $1M ARR</strong></td>
+<td>&lt;$600K</td>
+<td>Highly efficient</td>
+</tr>
+<tr>
+<td><strong>Months to $1M ARR</strong></td>
+<td>18 months</td>
+<td>Aggressive but achievable</td>
+</tr>
+<tr>
+<td><strong>Burn Multiple</strong></td>
+<td>&lt;1.5x</td>
+<td>Capital efficiency</td>
+</tr>
+<tr>
+<td><strong>Revenue per Employee</strong></td>
+<td>$150K+</td>
+<td>By Year 2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="financial-risk-factors">Financial Risk Factors</h2>
+<h3 id="market-risk">1. Market Risk</h3>
+<ul>
+<li><strong>Risk</strong>: AI operations market doesn’t grow as
+projected</li>
+<li><strong>Mitigation</strong>: Diversify use cases, build for general
+workflow automation</li>
+</ul>
+<h3 id="competitive-risk">2. Competitive Risk</h3>
+<ul>
+<li><strong>Risk</strong>: Microsoft, Google, or Amazon launch competing
+product</li>
+<li><strong>Mitigation</strong>: Focus on multi-cloud, open core,
+team-centric features</li>
+</ul>
+<h3 id="churn-risk">3. Churn Risk</h3>
+<ul>
+<li><strong>Risk</strong>: Higher than expected churn in Year 1</li>
+<li><strong>Mitigation</strong>: Invest heavily in onboarding, customer
+success from Day 1</li>
+</ul>
+<h3 id="pricing-risk">4. Pricing Risk</h3>
+<ul>
+<li><strong>Risk</strong>: Market expects lower pricing than
+modeled</li>
+<li><strong>Mitigation</strong>: Freemium model allows price discovery,
+flexible enterprise deals</li>
+</ul>
+<h3 id="technical-risk">5. Technical Risk</h3>
+<ul>
+<li><strong>Risk</strong>: Infrastructure costs exceed projections</li>
+<li><strong>Mitigation</strong>: Usage-based pricing passes costs to
+customers, optimize architecture</li>
+</ul>
+<h3 id="funding-risk">6. Funding Risk</h3>
+<ul>
+<li><strong>Risk</strong>: Unable to raise Series A at projected
+terms</li>
+<li><strong>Mitigation</strong>: Achieve clear milestones before
+fundraising, maintain lean operations</li>
+</ul>
+<hr />
+<h2 id="key-financial-metrics-dashboard">Key Financial Metrics
+Dashboard</h2>
+<h3 id="metrics-we-track-weekly">Metrics We Track Weekly</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Current</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New Signups</td>
+<td>20/week</td>
+<td>15/week</td>
+</tr>
+<tr>
+<td>Activation Rate</td>
+<td>40%</td>
+<td>35%</td>
+</tr>
+<tr>
+<td>Weekly Active Users</td>
+<td>60% of signups</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>NPS</td>
+<td>&gt;50</td>
+<td>72</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrics-we-track-monthly">Metrics We Track Monthly</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Current</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MRR Growth</td>
+<td>15% MoM</td>
+<td>12%</td>
+</tr>
+<tr>
+<td>Logo Churn</td>
+<td>&lt;5%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>Net Revenue Retention</td>
+<td>&gt;100%</td>
+<td>105%</td>
+</tr>
+<tr>
+<td>CAC</td>
+<td>&lt;$2,500</td>
+<td>$2,000</td>
+</tr>
+<tr>
+<td>LTV:CAC</td>
+<td>&gt;3x</td>
+<td>4.5x</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrics-we-track-quarterly">Metrics We Track Quarterly</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Current</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gross Margin</td>
+<td>&gt;75%</td>
+<td>75%</td>
+</tr>
+<tr>
+<td>Revenue per Employee</td>
+<td>Growing</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Enterprise Pipeline</td>
+<td>$100K+</td>
+<td>$45K</td>
+</tr>
+<tr>
+<td>Product-Market Fit Score</td>
+<td>&gt;40%</td>
+<td>35%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="comparable-company-metrics">Comparable Company Metrics</h2>
+<table>
+<thead>
+<tr>
+<th>Company</th>
+<th>Stage</th>
+<th>ARR</th>
+<th>Valuation</th>
+<th>Valuation/ARR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dify</strong></td>
+<td>Seed</td>
+<td>~$500K</td>
+<td>~$5M</td>
+<td>10x</td>
+</tr>
+<tr>
+<td><strong>LangChain</strong></td>
+<td>Series A</td>
+<td>~$5M</td>
+<td>~$50M</td>
+<td>10x</td>
+</tr>
+<tr>
+<td><strong>Moveworks</strong></td>
+<td>Series C</td>
+<td>~$50M</td>
+<td>~$500M</td>
+<td>10x</td>
+</tr>
+<tr>
+<td><strong>FuseIQ (Target)</strong></td>
+<td>Seed</td>
+<td>$240K</td>
+<td>$3M</td>
+<td>12.5x</td>
+</tr>
+<tr>
+<td><strong>FuseIQ (Series A Target)</strong></td>
+<td>Series A</td>
+<td>$1.5M</td>
+<td>$10M</td>
+<td>6.7x</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: AI infrastructure companies trade at premium
+multiples due to market growth and strategic value.</p>
+<hr />
+<h2 id="summary-investment-thesis">Summary &amp; Investment Thesis</h2>
+<h3 id="why-invest-in-fuseiq">Why Invest in FuseIQ?</h3>
+<ol type="1">
+<li><strong>Large, Growing Market</strong>: $50B AI operations market by
+2028</li>
+<li><strong>Clear Differentiation</strong>: Only platform combining
+visual builder + enterprise security + transparent pricing</li>
+<li><strong>Early Traction</strong>: 250+ beta users, 72 NPS, 15% weekly
+growth</li>
+<li><strong>Capital Efficient</strong>: $500K seed to $1M+ ARR in 18
+months</li>
+<li><strong>Experienced Founder</strong>: Serial entrepreneur with
+fintech + SaaS track record</li>
+<li><strong>Open Core Model</strong>: Community-driven growth +
+commercial revenue</li>
+</ol>
+<h3 id="financial-summary">Financial Summary</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ARR</strong></td>
+<td>$240K</td>
+<td>$1.2M</td>
+<td>$4.8M</td>
+</tr>
+<tr>
+<td><strong>Customers</strong></td>
+<td>100</td>
+<td>450</td>
+<td>1,500</td>
+</tr>
+<tr>
+<td><strong>Gross Margin</strong></td>
+<td>75%</td>
+<td>80%</td>
+<td>82%</td>
+</tr>
+<tr>
+<td><strong>Team</strong></td>
+<td>4</td>
+<td>8</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Cash Position</strong></td>
+<td>$160K</td>
+<td>$160K</td>
+<td>$3.3M</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The Opportunity</strong>: A $500K investment in FuseIQ’s seed
+round provides exposure to the rapidly growing AI operations market with
+a team that has demonstrated execution capability and product-market fit
+signals.</p>
+<hr />
+<p><em>Abbasi Global LLC | 2026 | fuseiq.io</em></p>
+<p><em>Disclaimer: These projections are estimates based on current
+market conditions and company assumptions. Actual results may vary
+significantly.</em></p>
+</body>
+</html>

@@ -172,7 +172,7 @@ export default function LandingPage() {
             <span>FuseIQ v3.0 — Abbasi Global Ltd</span>
           </div>
           <div className="flex items-center gap-4">
-            <span>Seoul, South Korea</span>
+            <span>Florida, USA</span>
             <span>·</span>
             <span>CONFIDENTIAL</span>
           </div>

@@ -20,7 +20,7 @@
 
 **FuseIQ v3.0** is a next-generation AI Agent Orchestration Platform — a command center where humans and AI agents collaborate seamlessly. It provides real-time monitoring, workflow orchestration, cost tracking, and team management for AI-powered operations.
 
-- **Owner:** Awais Abbasi (Abbasi Global Ltd)
+- **Owner:** Awais Abbasi (Abbasi Global LLC)
 - **Live URL:** https://fuseiq.vercel.app
 - **GitHub:** https://github.com/abbasi8586/fuseiq
 - **Version:** 3.0.0-alpha

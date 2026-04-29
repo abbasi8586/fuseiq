@@ -275,3 +275,7 @@ support@fuseiq.ai — Response within 24 hours
 
 *Version: 3.0.0-alpha*
 *Last Updated: April 27, 2026*
+*All prices in USD. Billed in US Dollars.*
+
+*Last Updated: April 29, 2026*
+*Version: 3.0.0-alpha | Florida, USA*
