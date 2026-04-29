@@ -5,6 +5,7 @@ import { KPICard } from "@/components/dashboard/kpi-card";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { QuickTasks } from "@/components/dashboard/quick-tasks";
 import { AgentStatus } from "@/components/dashboard/agent-status";
+import { useRealtimeDashboard } from "@/hooks/use-realtime-dashboard";
 import {
   Bot,
   Zap,
@@ -14,173 +15,40 @@ import {
   AlertTriangle,
   Shield,
   Clock,
+  Loader2,
 } from "lucide-react";
-import type { Agent, Task, ActivityEvent } from "@/types";
-
-// Mock data - replace with real data fetching
-const mockAgents: Agent[] = [
-  {
-    id: "1",
-    name: "Rook",
-    framework: "Custom",
-    provider: "Custom",
-    status: "online",
-    type: "AI",
-    role: "CEO Operator",
-    efficiency: 99,
-    executions: 1247,
-  },
-  {
-    id: "2",
-    name: "Kimi",
-    framework: "Kimi",
-    provider: "Moonshot",
-    status: "online",
-    type: "AI",
-    role: "Code Assistant",
-    efficiency: 94,
-    executions: 892,
-  },
-  {
-    id: "3",
-    name: "Claude",
-    framework: "Anthropic",
-    provider: "Anthropic",
-    status: "busy",
-    type: "AI",
-    role: "Analysis",
-    efficiency: 91,
-    executions: 634,
-  },
-  {
-    id: "4",
-    name: "GPT-4",
-    framework: "OpenAI",
-    provider: "OpenAI",
-    status: "online",
-    type: "AI",
-    role: "General Purpose",
-    efficiency: 88,
-    executions: 1523,
-  },
-  {
-    id: "5",
-    name: "CrewAI",
-    framework: "CrewAI",
-    provider: "CrewAI",
-    status: "offline",
-    type: "AI",
-    role: "Multi-Agent",
-    efficiency: 85,
-    executions: 234,
-  },
-];
-
-const mockTasks: Task[] = [
-  {
-    id: "1",
-    title: "Implement Agent Forge UI",
-    status: "in-progress",
-    priority: "high",
-    progress: 65,
-    assigneeName: "Rook",
-  },
-  {
-    id: "2",
-    title: "Set up Supabase Realtime",
-    status: "todo",
-    priority: "urgent",
-    progress: 0,
-    assigneeName: "Kimi",
-  },
-  {
-    id: "3",
-    title: "Design Approval Flow",
-    status: "review",
-    priority: "medium",
-    progress: 90,
-    assigneeName: "Claude",
-  },
-  {
-    id: "4",
-    title: "Cost Tracking Dashboard",
-    status: "done",
-    priority: "low",
-    progress: 100,
-    assigneeName: "GPT-4",
-  },
-  {
-    id: "5",
-    title: "API Key Management",
-    status: "in-progress",
-    priority: "high",
-    progress: 40,
-    assigneeName: "Rook",
-  },
-];
-
-const mockEvents: ActivityEvent[] = [
-  {
-    id: "1",
-    type: "agent_complete",
-    actor: "Kimi",
-    message: "completed code review for",
-    target: "Agent Forge PR",
-    timestamp: new Date(Date.now() - 2 * 60000).toISOString(),
-    severity: "success",
-  },
-  {
-    id: "2",
-    type: "agent_start",
-    actor: "Claude",
-    message: "started analysis on",
-    target: "Q3 Financial Model",
-    timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-    severity: "info",
-  },
-  {
-    id: "3",
-    type: "approval_request",
-    actor: "Rook",
-    message: "requests approval for",
-    target: "Production Deploy",
-    timestamp: new Date(Date.now() - 12 * 60000).toISOString(),
-    severity: "warning",
-  },
-  {
-    id: "4",
-    type: "task_completed",
-    actor: "GPT-4",
-    message: "finished",
-    target: "Cost Tracking Module",
-    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-    severity: "success",
-  },
-  {
-    id: "5",
-    type: "agent_fail",
-    actor: "CrewAI",
-    message: "failed to execute",
-    target: "Swarm Workflow #234",
-    timestamp: new Date(Date.now() - 45 * 60000).toISOString(),
-    severity: "error",
-  },
-  {
-    id: "6",
-    type: "message",
-    actor: "Rook",
-    message: "updated project roadmap",
-    timestamp: new Date(Date.now() - 60 * 60000).toISOString(),
-    severity: "info",
-  },
-];
 
 export default function CommandCenterPage() {
-  const onlineCount = mockAgents.filter((a) => a.status === "online").length;
-  const totalExecutions = mockAgents.reduce((sum, a) => sum + (a.executions || 0), 0);
-  const avgEfficiency = Math.round(
-    mockAgents.reduce((sum, a) => sum + (a.efficiency || 0), 0) / mockAgents.length
-  );
+  const { agents, events, tasks, loading, error } = useRealtimeDashboard();
+
+  const onlineCount = agents.filter((a) => a.status === "online").length;
+  const totalExecutions = agents.reduce((sum, a) => sum + (a.executions || 0), 0);
+  const avgEfficiency = agents.length > 0
+    ? Math.round(agents.reduce((sum, a) => sum + (a.efficiency || 0), 0) / agents.length)
+    : 0;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#00D4FF] animate-spin" />
+          <p className="text-[#6B7290]">Loading your command center...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="glass-card p-6 text-center">
+          <AlertTriangle className="w-8 h-8 text-[#FF4757] mx-auto mb-3" />
+          <p className="text-[#FF4757] font-medium">Failed to load dashboard</p>
+          <p className="text-[#6B7290] text-sm mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -214,7 +82,7 @@ export default function CommandCenterPage() {
         <KPICard
           title="Active Agents"
           value={onlineCount}
-          subtitle={`${mockAgents.length} total agents`}
+          subtitle={`${agents.length} total agents`}
           trend={12}
           trendLabel="vs last hour"
           icon={<Bot className="w-5 h-5" />}
@@ -261,13 +129,13 @@ export default function CommandCenterPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Activity Feed - Takes 2 columns */}
         <div className="lg:col-span-2">
-          <ActivityFeed events={mockEvents} />
+          <ActivityFeed events={events} />
         </div>
 
         {/* Right Sidebar */}
         <div className="space-y-6">
-          <QuickTasks tasks={mockTasks} />
-          <AgentStatus agents={mockAgents} />
+          <QuickTasks tasks={tasks} />
+          <AgentStatus agents={agents} />
         </div>
       </div>
 
