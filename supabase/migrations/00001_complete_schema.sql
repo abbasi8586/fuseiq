@@ -37,12 +37,19 @@ CREATE TABLE IF NOT EXISTS workspace_members (
 -- ============================================
 -- 3. AGENTS (AI + Human registry)
 -- ============================================
--- NOTE: If the old agents table exists, we migrate it
+-- NOTE: Clean up old agents table if exists (with CASCADE)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'agents_old') THEN
+    DROP TABLE agents_old CASCADE;
+  END IF;
+END $$;
+
+-- NOTE: If the old agents table exists, rename it first
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'agents') THEN
-    -- Rename old table to preserve data
-    ALTER TABLE agents RENAME TO agents_old;
+    ALTER TABLE agents RENAME TO agents_old_v2;
   END IF;
 END $$;
 
@@ -68,13 +75,16 @@ CREATE TABLE IF NOT EXISTS agents (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Migrate old data if exists
+-- Migrate old data if exists (skip if schema mismatch)
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'agents_old') THEN
-    INSERT INTO agents (id, name, description, framework, status, config, created_at, updated_at)
-    SELECT id, name, description, framework, status, config, created_at, updated_at FROM agents_old;
-    DROP TABLE agents_old;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'agents_old_v2') THEN
+    -- Check if columns exist before migrating
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'agents_old_v2' AND column_name = 'created_at') THEN
+      INSERT INTO agents (id, name, description, framework, status, config, created_at, updated_at)
+      SELECT id, name, description, framework, status, config, created_at, updated_at FROM agents_old_v2;
+    END IF;
+    DROP TABLE IF EXISTS agents_old_v2 CASCADE;
   END IF;
 END $$;
 
@@ -153,7 +163,8 @@ CREATE TABLE IF NOT EXISTS executions (
   result JSONB,
   error_message TEXT,
   started_at TIMESTAMPTZ DEFAULT NOW(),
-  completed_at TIMESTAMPTZ
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================

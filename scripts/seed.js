@@ -276,17 +276,27 @@ async function seed() {
   }
   console.log(`  ✅ ${activities.length} activity logs created`);
 
-  // 11. Audit Log (immutable entries)
+  // 11. Audit Log (immutable entries — NO target_name column in schema)
   console.log('Creating audit log entries...');
   const auditEntries = [
-    { actor_type: 'user', action: 'workspace.created', target_type: 'workspace', target_name: 'FuseIQ Demo', metadata: { plan: 'Professional' } },
-    { actor_type: 'user', action: 'agent.created', target_type: 'agent', target_name: 'Aurora', metadata: { framework: 'Kimi' } },
-    { actor_type: 'user', action: 'agent.created', target_type: 'agent', target_name: 'Vanguard', metadata: { framework: 'OpenAI' } },
-    { actor_type: 'user', action: 'task.created', target_type: 'task', target_name: 'Design new landing page', metadata: { priority: 'high' } },
-    { actor_type: 'system', action: 'rbac.policy.updated', target_type: 'policy', target_name: 'Workspace Members', metadata: { change: 'RLS enabled' } },
-    { actor_type: 'user', action: 'approval.approved', target_type: 'approval', target_name: 'Send 10,000 automated emails', metadata: { cost: 89 } },
-    { actor_type: 'user', action: 'approval.rejected', target_type: 'approval', target_name: 'Modify payment gateway', metadata: { risk: 'critical' } },
-    { actor_type: 'agent', action: 'execution.completed', target_type: 'execution', target_name: 'Aurora execution #1', metadata: { tokens: 1500, cost: 0.03 } }
+    { actor_type: 'user', action: 'workspace.created', target_type: 'workspace', metadata: { plan: 'Professional' } },
+    { actor_type: 'user', action: 'agent.created', target_type: 'agent', metadata: { framework: 'Kimi', agent: 'Aurora' } },
+    { actor_type: 'user', action: 'agent.created', target_type: 'agent', metadata: { framework: 'OpenAI', agent: 'Vanguard' } },
+    { actor_type: 'user', action: 'task.created', target_type: 'task', metadata: { priority: 'high', task: 'Design new landing page' } },
+    { actor_type: 'system', action: 'rbac.policy.updated', target_type: 'policy', metadata: { change: 'RLS enabled', table: 'workspace_members' } },
+    { actor_type: 'user', action: 'approval.approved', target_type: 'approval', metadata: { cost: 89, action: 'Send 10,000 automated emails' } },
+    { actor_type: 'user', action: 'approval.rejected', target_type: 'approval', metadata: { risk: 'critical', action: 'Modify payment gateway' } },
+    { actor_type: 'agent', action: 'execution.completed', target_type: 'execution', metadata: { tokens: 1500, cost: 0.03, agent: 'Aurora' } },
+    { actor_type: 'system', action: 'login.success', target_type: 'auth', metadata: { method: 'password', ip: '192.168.1.1' } },
+    { actor_type: 'user', action: 'billing.plan_upgraded', target_type: 'billing', metadata: { from: 'Starter', to: 'Professional', amount: 49 } },
+    { actor_type: 'agent', action: 'security.scan_complete', target_type: 'security', metadata: { issues: 0, scan_type: 'full' } },
+    { actor_type: 'user', action: 'member.invited', target_type: 'member', metadata: { email: 'sarah@fuseiq.ai', role: 'Manager' } },
+    { actor_type: 'system', action: 'backup.completed', target_type: 'system', metadata: { size: '45MB', duration: '12s' } },
+    { actor_type: 'agent', action: 'model.switched', target_type: 'provider', metadata: { from: 'gpt-3.5', to: 'gpt-4', reason: 'quality' } },
+    { actor_type: 'user', action: 'workspace.settings_updated', target_type: 'workspace', metadata: { theme: 'dark', timezone: 'America/New_York' } },
+    { actor_type: 'system', action: 'rate_limit.triggered', target_type: 'api', metadata: { endpoint: '/api/execute', limit: 100, window: '1m' } },
+    { actor_type: 'agent', action: 'error.detected', target_type: 'execution', metadata: { error: 'timeout', agent: 'Flux', retry: true } },
+    { actor_type: 'user', action: 'api_key.generated', target_type: 'auth', metadata: { key_type: 'service_role', workspace: 'FuseIQ Demo' } }
   ];
 
   for (const entry of auditEntries) {
