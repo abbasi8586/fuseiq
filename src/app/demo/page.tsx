@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { createClient } from "@supabase/supabase-js";
 import { Metadata } from "next";
 import { DemoDashboard } from "./demo-dashboard";
@@ -11,45 +13,55 @@ export const metadata: Metadata = {
 const DEMO_WORKSPACE_ID = "00000000-0000-0000-0000-000000000001";
 
 async function getDemoData() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: { persistSession: false, autoRefreshToken: false },
-    }
-  );
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: { persistSession: false, autoRefreshToken: false },
+      }
+    );
 
-  const [agentsRes, eventsRes, tasksRes, workspaceRes] = await Promise.all([
-    supabase
-      .from("agents")
-      .select("*")
-      .eq("workspace_id", DEMO_WORKSPACE_ID)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("activity_logs")
-      .select("*")
-      .eq("workspace_id", DEMO_WORKSPACE_ID)
-      .order("created_at", { ascending: false })
-      .limit(50),
-    supabase
-      .from("tasks")
-      .select("*")
-      .eq("workspace_id", DEMO_WORKSPACE_ID)
-      .order("created_at", { ascending: false })
-      .limit(20),
-    supabase
-      .from("workspaces")
-      .select("*")
-      .eq("id", DEMO_WORKSPACE_ID)
-      .single(),
-  ]);
+    const [agentsRes, eventsRes, tasksRes, workspaceRes] = await Promise.all([
+      supabase
+        .from("agents")
+        .select("*")
+        .eq("workspace_id", DEMO_WORKSPACE_ID)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("activity_logs")
+        .select("*")
+        .eq("workspace_id", DEMO_WORKSPACE_ID)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("tasks")
+        .select("*")
+        .eq("workspace_id", DEMO_WORKSPACE_ID)
+        .order("created_at", { ascending: false })
+        .limit(20),
+      supabase
+        .from("workspaces")
+        .select("*")
+        .eq("id", DEMO_WORKSPACE_ID)
+        .single(),
+    ]);
 
-  return {
-    agents: agentsRes.data || [],
-    events: eventsRes.data || [],
-    tasks: tasksRes.data || [],
-    workspace: workspaceRes.data || null,
-  };
+    return {
+      agents: agentsRes.data || [],
+      events: eventsRes.data || [],
+      tasks: tasksRes.data || [],
+      workspace: workspaceRes.data || null,
+    };
+  } catch (err) {
+    console.error("Demo data fetch error:", err);
+    return {
+      agents: [],
+      events: [],
+      tasks: [],
+      workspace: null,
+    };
+  }
 }
 
 export default async function DemoPage() {
