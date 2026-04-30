@@ -54,8 +54,8 @@ export function QuickTasks({ tasks }: QuickTasksProps) {
 
         <div className="space-y-3">
           {activeTasks.map((task, index) => {
-            const priority = priorityConfig[task.priority];
-            const status = statusConfig[task.status];
+            const priority = priorityConfig[task.priority] || priorityConfig.low;
+            const status = statusConfig[task.status] || statusConfig.todo;
 
             return (
               <motion.div

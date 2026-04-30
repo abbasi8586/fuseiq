@@ -7,21 +7,46 @@ import { KPICard } from "@/components/dashboard/kpi-card";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { QuickTasks } from "@/components/dashboard/quick-tasks";
 import { AgentStatus } from "@/components/dashboard/agent-status";
+import { GlassCard } from "@/components/glass/glass-card";
 import {
   Bot,
   Zap,
   CheckCircle,
   DollarSign,
   ArrowRight,
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Cpu,
+  Target,
+  Clock,
+  Users,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const DEMO_WORKSPACE_ID = "00000000-0000-0000-0000-000000000001";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
 
 function mapAgent(dbAgent: any) {
   return {
@@ -89,6 +114,35 @@ function mapTask(dbTask: any) {
   };
 }
 
+// Static demo data for charts
+const costData = [
+  { date: "Mon", cost: 12.5, agents: 4 },
+  { date: "Tue", cost: 18.3, agents: 5 },
+  { date: "Wed", cost: 15.2, agents: 5 },
+  { date: "Thu", cost: 22.1, agents: 6 },
+  { date: "Fri", cost: 19.8, agents: 6 },
+  { date: "Sat", cost: 8.4, agents: 3 },
+  { date: "Sun", cost: 6.2, agents: 2 },
+];
+
+const frameworkData = [
+  { name: "Kimi", executions: 450, cost: 45.2 },
+  { name: "OpenAI", executions: 320, cost: 68.5 },
+  { name: "Anthropic", executions: 280, cost: 52.3 },
+  { name: "CrewAI", executions: 150, cost: 23.1 },
+  { name: "LangGraph", executions: 120, cost: 18.7 },
+];
+
+const efficiencyData = [
+  { name: "MarketingBot", efficiency: 94, color: "#00D4FF" },
+  { name: "SupportAI", efficiency: 96, color: "#00E5A0" },
+  { name: "CodeReview", efficiency: 92, color: "#B829DD" },
+  { name: "SalesScout", efficiency: 89, color: "#FF6B35" },
+  { name: "DataSync", efficiency: 88, color: "#FFC857" },
+];
+
+const COLORS = ["#00D4FF", "#B829DD", "#00E5A0", "#FF6B35", "#FFC857"];
+
 export default function DemoPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
@@ -97,6 +151,10 @@ export default function DemoPage() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
       try {
         const [agentsRes, eventsRes, tasksRes] = await Promise.all([
           supabase
@@ -269,6 +327,298 @@ export default function DemoPage() {
               <QuickTasks tasks={tasks} />
               <AgentStatus agents={agents} />
             </div>
+          </div>
+
+          {/* Analytics Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#00D4FF]" />
+                Analytics Overview
+              </h2>
+              <div className="flex items-center gap-2">
+                {["24h", "7d", "30d"].map((range) => (
+                  <button
+                    key={range}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7290] hover:text-white border border-white/[0.06] transition-all"
+                  >
+                    {range}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Charts Row 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-[#00D4FF]" />
+                Cost Over Time
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={costData}>
+                    <defs>
+                      <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00D4FF" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#00D4FF" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="date" stroke="#4A5068" fontSize={12} />
+                    <YAxis stroke="#4A5068" fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0B0D14",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "8px",
+                        color: "#fff",
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="cost"
+                      stroke="#00D4FF"
+                      fill="url(#costGradient)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </GlassCard>
+
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-[#B829DD]" />
+                Executions by Framework
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={frameworkData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="name" stroke="#4A5068" fontSize={12} />
+                    <YAxis stroke="#4A5068" fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0B0D14",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "8px",
+                        color: "#fff",
+                      }}
+                    />
+                    <Bar dataKey="executions" fill="#B829DD" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </GlassCard>
+          </div>
+
+          {/* Charts Row 2 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <Target className="w-4 h-4 text-[#00E5A0]" />
+                Agent Efficiency
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={efficiencyData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="efficiency"
+                    >
+                      {efficiencyData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0B0D14",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "8px",
+                        color: "#fff",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap gap-3 justify-center mt-2">
+                  {efficiencyData.map((item) => (
+                    <div key={item.name} className="flex items-center gap-1.5">
+                      <span
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-xs text-[#6B7290]">
+                        {item.name} ({item.efficiency}%)
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#FF6B35]" />
+                Execution Latency
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { label: "Kimi K2.5", latency: "245ms", trend: "-12%", color: "#00D4FF" },
+                  { label: "GPT-4", latency: "380ms", trend: "-5%", color: "#10A37F" },
+                  { label: "Claude 3", latency: "420ms", trend: "-8%", color: "#CC785C" },
+                  { label: "CrewAI", latency: "1.2s", trend: "+15%", color: "#00E5A0" },
+                  { label: "LangGraph", latency: "890ms", trend: "-3%", color: "#B829DD" },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-sm text-white">{item.label}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-[#B8BED8] font-mono">
+                        {item.latency}
+                      </span>
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-lg"
+                        style={{
+                          backgroundColor: item.trend.startsWith("-")
+                            ? "#00E5A010"
+                            : "#FF475710",
+                          color: item.trend.startsWith("-")
+                            ? "#00E5A0"
+                            : "#FF4757",
+                        }}
+                      >
+                        {item.trend}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+
+          {/* Bottom Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#00D4FF]" />
+                Team Activity
+              </h3>
+              <div className="space-y-2">
+                {[
+                  { name: "Awais Abbasi", actions: 45, color: "#00D4FF" },
+                  { name: "Rook AI", actions: 234, color: "#B829DD" },
+                  { name: "Sarah Chen", actions: 28, color: "#00E5A0" },
+                ].map((user) => (
+                  <div key={user.name} className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center text-white text-xs font-bold">
+                      {user.name.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-white">{user.name}</span>
+                        <span className="text-xs text-[#6B7290]">
+                          {user.actions} actions
+                        </span>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full bg-white/[0.04] mt-1">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${(user.actions / 250) * 100}%`,
+                            backgroundColor: user.color,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#FFC857]" />
+                Success Rate by Type
+              </h3>
+              <div className="space-y-2">
+                {[
+                  { type: "Email Outreach", rate: 98.2, color: "#00E5A0" },
+                  { type: "Code Review", rate: 94.5, color: "#00D4FF" },
+                  { type: "Data Pipeline", rate: 91.3, color: "#B829DD" },
+                  { type: "Support Response", rate: 96.8, color: "#FF6B35" },
+                ].map((item) => (
+                  <div key={item.type} className="flex items-center justify-between">
+                    <span className="text-sm text-[#B8BED8]">{item.type}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-1.5 rounded-full bg-white/[0.04]">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${item.rate}%`,
+                            backgroundColor: item.color,
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-white font-mono w-10 text-right">
+                        {item.rate}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+
+            <GlassCard>
+              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#FF6B35]" />
+                Quick Actions
+              </h3>
+              <div className="space-y-2">
+                {[
+                  { label: "Deploy Agent", desc: "Create new AI agent", color: "#00D4FF", href: "/login?signup=1" },
+                  { label: "Run Workflow", desc: "Execute multi-agent task", color: "#B829DD", href: "/login?signup=1" },
+                  { label: "View Staff", desc: "Browse agent directory", color: "#00E5A0", href: "/login?signup=1" },
+                ].map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors group"
+                  >
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: `${item.color}15` }}
+                    >
+                      <ArrowRight className="w-4 h-4" style={{ color: item.color }} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-white group-hover:text-[#00D4FF] transition-colors">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-[#6B7290]">{item.desc}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </GlassCard>
           </div>
 
           {/* Footer CTA */}

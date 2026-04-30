@@ -51,17 +51,17 @@ export function AgentStatus({ agents }: AgentStatusProps) {
             >
               {/* Avatar */}
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center text-white font-bold text-sm shrink-0">
-                {agent.name.charAt(0)}
+                {(agent.name || "?").charAt(0)}
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-white font-medium truncate">
-                    {agent.name}
+                    {agent.name || "Unnamed Agent"}
                   </p>
                   <StatusBadge
-                    type={agent.type}
+                    type={agent.type || "AI"}
                     framework={agent.framework}
                     status={agent.status}
                   />

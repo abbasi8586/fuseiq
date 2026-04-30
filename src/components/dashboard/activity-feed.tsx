@@ -66,7 +66,7 @@ export function ActivityFeed({ events, className }: ActivityFeedProps) {
 
       <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
         {events.map((event, index) => {
-          const config = eventConfig[event.type];
+          const config = eventConfig[event.type] || eventConfig.message;
           const Icon = config.icon;
 
           return (
