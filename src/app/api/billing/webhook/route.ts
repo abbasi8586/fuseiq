@@ -3,9 +3,13 @@ import { stripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
+  if (!stripe || !webhookSecret || webhookSecret.includes("placeholder")) {
+    return NextResponse.json({ error: "Stripe webhook not configured" }, { status: 503 });
+  }
+
   const payload = await req.text();
   const signature = req.headers.get("stripe-signature")!;
 
