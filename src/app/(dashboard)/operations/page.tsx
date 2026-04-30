@@ -1,283 +1,538 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { KanbanSquare, Plus, Calendar, Flag, User, MessageSquare, Clock, Filter, Search } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LayoutDashboard,
+  Plus,
+  Calendar,
+  Flag,
+  User,
+  Bot,
+  Clock,
+  Trash2,
+  MoreHorizontal,
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+  Zap,
+  Search,
+  Filter,
+  ArrowUpDown,
+  ChevronDown,
+  Loader2,
+  X,
+  GripVertical,
+} from "lucide-react";
 import { GlassCard } from "@/components/glass/glass-card";
+import { ProgressBar } from "@/components/glass/progress-bar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { TaskCard } from "@/components/operations/task-card";
-import { KanbanColumn } from "@/components/operations/kanban-column";
-import { useState, useMemo } from "react";
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: "todo" | "in-progress" | "review" | "done";
-  priority: "low" | "medium" | "high" | "urgent";
-  assignee: string;
-  assigneeInitials: string;
-  dueDate: string;
-  tags: string[];
-  comments: number;
-  progress: number;
-}
-
-const initialTasks: Task[] = [
-  { id: "1", title: "Design glassmorphism system", description: "Create comprehensive glassmorphism design tokens and component library", status: "done", priority: "high", assignee: "Elena", assigneeInitials: "ER", dueDate: "2024-12-01", tags: ["Design"], comments: 5, progress: 100 },
-  { id: "2", title: "Implement BYOK key vault", description: "Build bring-your-own-key encryption vault with secure key rotation", status: "in-progress", priority: "urgent", assignee: "Agent Forge", assigneeInitials: "AF", dueDate: "2024-12-15", tags: ["Security", "Backend"], comments: 12, progress: 75 },
-  { id: "3", title: "Build Co-Pilot command palette", description: "AI-powered command palette with natural language interface", status: "in-progress", priority: "high", assignee: "CodeReview", assigneeInitials: "CR", dueDate: "2024-12-20", tags: ["AI", "Frontend"], comments: 3, progress: 60 },
-  { id: "4", title: "Setup Supabase realtime", description: "Configure realtime subscriptions for live collaboration features", status: "todo", priority: "medium", assignee: "Mike", assigneeInitials: "MT", dueDate: "2024-12-25", tags: ["Backend"], comments: 0, progress: 0 },
-  { id: "5", title: "Create agent marketplace UI", description: "Design and build the agent marketplace browsing and discovery interface", status: "todo", priority: "medium", assignee: "Sarah", assigneeInitials: "SK", dueDate: "2025-01-05", tags: ["Frontend", "Product"], comments: 2, progress: 0 },
-  { id: "6", title: "Write API documentation", description: "Comprehensive API docs with examples and authentication guide", status: "review", priority: "low", assignee: "ContentForge", assigneeInitials: "CF", dueDate: "2024-12-10", tags: ["Docs"], comments: 1, progress: 90 },
-  { id: "7", title: "SOC 2 compliance checklist", description: "Prepare all documentation and evidence for SOC 2 Type II audit", status: "todo", priority: "high", assignee: "Dr. Wilson", assigneeInitials: "JW", dueDate: "2025-01-15", tags: ["Security", "Compliance"], comments: 8, progress: 15 },
-  { id: "8", title: "Mobile app wireframes", description: "Low and high fidelity wireframes for iOS and Android apps", status: "in-progress", priority: "medium", assignee: "Elena", assigneeInitials: "ER", dueDate: "2024-12-30", tags: ["Design", "Mobile"], comments: 4, progress: 40 },
-  { id: "9", title: "Stripe billing integration", description: "Implement subscription billing with Stripe Connect", status: "todo", priority: "high", assignee: "Marcus", assigneeInitials: "MC", dueDate: "2025-01-10", tags: ["Backend", "Fintech"], comments: 6, progress: 5 },
-  { id: "10", title: "Performance optimization", description: "Audit and optimize Core Web Vitals across all pages", status: "review", priority: "medium", assignee: "Mike", assigneeInitials: "MT", dueDate: "2024-12-18", tags: ["Performance"], comments: 2, progress: 85 },
-];
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const columns = [
-  { id: "todo" as const, label: "To Do", color: "#4A5068" },
-  { id: "in-progress" as const, label: "In Progress", color: "#00D4FF" },
-  { id: "review" as const, label: "Review", color: "#B829DD" },
-  { id: "done" as const, label: "Done", color: "#00E5A0" },
+  { id: "todo", label: "To Do", color: "#6B7280", icon: Circle },
+  { id: "in_progress", label: "In Progress", color: "#00D4FF", icon: Zap },
+  { id: "review", label: "Review", color: "#B829DD", icon: AlertCircle },
+  { id: "done", label: "Done", color: "#00E5A0", icon: CheckCircle2 },
 ];
 
-const priorityColors = {
-  low: { bg: "rgba(255,255,255,0.05)", text: "#6B7290", border: "rgba(255,255,255,0.06)" },
-  medium: { bg: "rgba(0,212,255,0.08)", text: "#00D4FF", border: "rgba(0,212,255,0.15)" },
-  high: { bg: "rgba(255,193,87,0.08)", text: "#FFC857", border: "rgba(255,193,87,0.15)" },
-  urgent: { bg: "rgba(255,71,87,0.08)", text: "#FF4757", border: "rgba(255,71,87,0.15)" },
-};
+const priorities = [
+  { id: "low", label: "Low", color: "#6B7280" },
+  { id: "medium", label: "Medium", color: "#00D4FF" },
+  { id: "high", label: "High", color: "#FF6B35" },
+  { id: "urgent", label: "Urgent", color: "#FF4757" },
+];
+
+const assigneeTypes = [
+  { id: "Human", label: "Human", icon: User },
+  { id: "AI", label: "AI Agent", icon: Bot },
+];
+
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: "todo" | "in_progress" | "review" | "done";
+  priority: "low" | "medium" | "high" | "urgent";
+  assignee_type: "AI" | "Human";
+  assignee_id?: string;
+  due_date?: string;
+  progress: number;
+  tags?: string[];
+  created_at: string;
+  updated_at?: string;
+}
 
 export default function OperationsPage() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState<string>("All");
-  const [assigneeFilter, setAssigneeFilter] = useState<string>("All");
-  const [showAddTask, setShowAddTask] = useState(false);
-  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [draggedTask, setDraggedTask] = useState<string | null>(null);
 
-  const [newTask, setNewTask] = useState<Partial<Task>>({
-    title: "",
-    description: "",
-    priority: "medium",
-    assignee: "",
-    assigneeInitials: "",
-    dueDate: "",
-    tags: [],
+  // Form state
+  const [formTitle, setFormTitle] = useState("");
+  const [formDesc, setFormDesc] = useState("");
+  const [formPriority, setFormPriority] = useState<"low" | "medium" | "high" | "urgent">("medium");
+  const [formAssigneeType, setFormAssigneeType] = useState<"AI" | "Human">("Human");
+  const [formDueDate, setFormDueDate] = useState("");
+  const [formTags, setFormTags] = useState("");
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      const res = await fetch("/api/tasks");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setTasks(data || []);
+    } catch (err) {
+      toast.error("Failed to load tasks");
+      setTasks([
+        { id: "1", title: "Design new landing page", status: "in_progress", priority: "high", assignee_type: "Human", progress: 60, tags: ["design", "web"], created_at: "2024-01-01" },
+        { id: "2", title: "Implement OAuth flow", status: "todo", priority: "urgent", assignee_type: "AI", progress: 0, tags: ["auth", "backend"], created_at: "2024-01-02" },
+        { id: "3", title: "Write API documentation", status: "review", priority: "medium", assignee_type: "Human", progress: 90, tags: ["docs"], created_at: "2024-01-03" },
+        { id: "4", title: "Optimize database queries", status: "done", priority: "high", assignee_type: "AI", progress: 100, tags: ["performance", "db"], created_at: "2024-01-04" },
+        { id: "5", title: "Set up CI/CD pipeline", status: "todo", priority: "medium", assignee_type: "Human", progress: 10, tags: ["devops"], created_at: "2024-01-05" },
+        { id: "6", title: "Create marketing assets", status: "in_progress", priority: "low", assignee_type: "AI", progress: 45, tags: ["marketing", "design"], created_at: "2024-01-06" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  const createTask = async () => {
+    if (!formTitle.trim()) {
+      toast.error("Task title is required");
+      return;
+    }
+    setCreating(true);
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formTitle,
+          description: formDesc,
+          priority: formPriority,
+          assignee_type: formAssigneeType,
+          due_date: formDueDate ? new Date(formDueDate).toISOString() : null,
+          progress: 0,
+          tags: formTags.split(",").map((t) => t.trim()).filter(Boolean),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create");
+      const newTask = await res.json();
+      setTasks((prev) => [newTask, ...prev]);
+      toast.success(`Task "${formTitle}" created`);
+      setCreateOpen(false);
+      resetForm();
+    } catch {
+      const mockTask: Task = {
+        id: crypto.randomUUID(),
+        title: formTitle,
+        description: formDesc,
+        status: "todo",
+        priority: formPriority,
+        assignee_type: formAssigneeType,
+        due_date: formDueDate ? new Date(formDueDate).toISOString() : undefined,
+        progress: 0,
+        tags: formTags.split(",").map((t) => t.trim()).filter(Boolean),
+        created_at: new Date().toISOString(),
+      };
+      setTasks((prev) => [mockTask, ...prev]);
+      toast.success(`Task "${formTitle}" created (demo mode)`);
+      setCreateOpen(false);
+      resetForm();
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const updateTaskStatus = async (id: string, status: string) => {
+    const progress = status === "done" ? 100 : status === "review" ? 90 : status === "in_progress" ? 50 : 0;
+    try {
+      const res = await fetch(`/api/tasks/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, progress }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: status as any, progress } : t)));
+      toast.success("Task moved");
+    } catch {
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: status as any, progress } : t)));
+      toast.success("Task moved (demo mode)");
+    }
+  };
+
+  const deleteTask = async (id: string) => {
+    try {
+      const res = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+      toast.success("Task deleted");
+    } catch {
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+      toast.success("Task deleted (demo mode)");
+    }
+  };
+
+  const resetForm = () => {
+    setFormTitle("");
+    setFormDesc("");
+    setFormPriority("medium");
+    setFormAssigneeType("Human");
+    setFormDueDate("");
+    setFormTags("");
+  };
+
+  const filteredTasks = tasks.filter((t) => {
+    if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false;
+    if (priorityFilter !== "all" && t.priority !== priorityFilter) return false;
+    return true;
   });
 
-  const assignees = useMemo(() => {
-    const all = Array.from(new Set(tasks.map((t) => t.assignee)));
-    return ["All", ...all];
-  }, [tasks]);
+  const tasksByColumn = (status: string) => filteredTasks.filter((t) => t.status === status);
 
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((t) => {
-      const matchSearch = t.title.toLowerCase().includes(search.toLowerCase()) || t.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
-      const matchPriority = priorityFilter === "All" || t.priority === priorityFilter;
-      const matchAssignee = assigneeFilter === "All" || t.assignee === assigneeFilter;
-      return matchSearch && matchPriority && matchAssignee;
-    });
-  }, [tasks, search, priorityFilter, assigneeFilter]);
+  const getPriorityColor = (p: string) => priorities.find((pr) => pr.id === p)?.color || "#6B7280";
 
-  const handleDragStart = (taskId: string) => {
-    setDraggedTaskId(taskId);
+  const handleDragStart = (taskId: string) => setDraggedTask(taskId);
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handleDrop = (e: React.DragEvent, status: string) => {
+    e.preventDefault();
+    if (draggedTask) {
+      updateTaskStatus(draggedTask, status);
+      setDraggedTask(null);
+    }
   };
 
-  const handleDrop = (columnId: string) => {
-    if (!draggedTaskId) return;
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === draggedTaskId
-          ? { ...t, status: columnId as Task["status"], progress: columnId === "done" ? 100 : columnId === "todo" ? 0 : t.progress }
-          : t
-      )
-    );
-    setDraggedTaskId(null);
-  };
-
-  const handleAddTask = () => {
-    if (!newTask.title || !newTask.assignee) return;
-    const task: Task = {
-      id: String(Date.now()),
-      title: newTask.title,
-      description: newTask.description || "",
-      status: "todo",
-      priority: (newTask.priority as Task["priority"]) || "medium",
-      assignee: newTask.assignee,
-      assigneeInitials: newTask.assigneeInitials || newTask.assignee.slice(0, 2).toUpperCase(),
-      dueDate: newTask.dueDate || new Date().toISOString().split("T")[0],
-      tags: newTask.tags?.length ? newTask.tags : ["General"],
-      comments: 0,
-      progress: 0,
-    };
-    setTasks((prev) => [...prev, task]);
-    setNewTask({ title: "", description: "", priority: "medium", assignee: "", assigneeInitials: "", dueDate: "", tags: [] });
-    setShowAddTask(false);
-  };
+  // Metrics
+  const total = tasks.length;
+  const done = tasks.filter((t) => t.status === "done").length;
+  const inProgress = tasks.filter((t) => t.status === "in_progress").length;
+  const urgent = tasks.filter((t) => t.priority === "urgent" && t.status !== "done").length;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <KanbanSquare className="w-6 h-6 text-[#00D4FF]" />
+            <LayoutDashboard className="w-6 h-6 text-[#00D4FF]" />
             Operations Center
           </h1>
-          <p className="text-sm text-[#6B7290] mt-1">Kanban board for team task management</p>
+          <p className="text-sm text-[#6B7290] mt-1">Task management and workflow orchestration</p>
         </div>
-        <Button variant="neon" onClick={() => setShowAddTask(true)}>
+        <Button className="neon-button border-0 bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-[#06070A]" onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Task
         </Button>
       </div>
 
+      {/* Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "Total Tasks", value: total.toString(), icon: LayoutDashboard, color: "#00D4FF" },
+          { label: "In Progress", value: inProgress.toString(), icon: Zap, color: "#00D4FF" },
+          { label: "Completed", value: done.toString(), icon: CheckCircle2, color: "#00E5A0" },
+          { label: "Urgent", value: urgent.toString(), icon: Flag, color: "#FF4757" },
+        ].map((metric) => (
+          <GlassCard key={metric.label} glow="none">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-[#6B7290] mb-1">{metric.label}</p>
+                <p className="text-2xl font-bold" style={{ color: metric.color }}>{metric.value}</p>
+              </div>
+              <metric.icon className="w-5 h-5" style={{ color: metric.color, opacity: 0.5 }} />
+            </div>
+          </GlassCard>
+        ))}
+      </div>
+
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px] max-w-xs">
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A5068]" />
-          <input
-            type="text"
+          <Input
             placeholder="Search tasks..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-4 rounded-lg glass-input text-sm text-white placeholder:text-[#4A5068]"
+            className="pl-9 h-8 w-48 bg-white/[0.03] border-white/[0.06] text-sm text-white placeholder:text-[#4A5068]"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-[#4A5068]" />
-          <select
-            value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            className="h-9 px-3 rounded-lg glass-input text-sm text-white bg-transparent"
-          >
-            <option value="All" className="bg-[#0F111A]">All Priorities</option>
-            <option value="urgent" className="bg-[#0F111A]">Urgent</option>
-            <option value="high" className="bg-[#0F111A]">High</option>
-            <option value="medium" className="bg-[#0F111A]">Medium</option>
-            <option value="low" className="bg-[#0F111A]">Low</option>
-          </select>
-          <select
-            value={assigneeFilter}
-            onChange={(e) => setAssigneeFilter(e.target.value)}
-            className="h-9 px-3 rounded-lg glass-input text-sm text-white bg-transparent"
-          >
-            {assignees.map((a) => (
-              <option key={a} value={a} className="bg-[#0F111A]">{a === "All" ? "All Assignees" : a}</option>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button variant="outline" size="sm" className="h-8 border-white/[0.08] text-[#6B7290] hover:text-white text-xs">
+              <Flag className="w-3 h-3 mr-1" />
+              {priorityFilter === "all" ? "Priority" : priorityFilter}
+              <ChevronDown className="w-3 h-3 ml-1" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-[#0B0D14] border-white/[0.08]">
+            <DropdownMenuItem onClick={() => setPriorityFilter("all")} className="text-xs text-[#6B7290] hover:text-white focus:bg-white/[0.04] cursor-pointer">
+              All Priorities
+            </DropdownMenuItem>
+            {priorities.map((p) => (
+              <DropdownMenuItem key={p.id} onClick={() => setPriorityFilter(p.id)} className="text-xs text-[#6B7290] hover:text-white focus:bg-white/[0.04] cursor-pointer">
+                <span className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: p.color }} />
+                {p.label}
+              </DropdownMenuItem>
             ))}
-          </select>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Kanban Board */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 text-[#00D4FF] animate-spin" />
         </div>
-      </div>
-
-      {/* Kanban */}
-      <div className="flex gap-4 overflow-x-auto pb-2" style={{ minHeight: "500px" }}>
-        {columns.map((column) => {
-          const columnTasks = filteredTasks.filter((t) => t.status === column.id);
-          return (
-            <KanbanColumn
-              key={column.id}
-              column={column}
-              tasks={columnTasks}
-              priorityColors={priorityColors}
-              onDragStart={handleDragStart}
-              onDrop={handleDrop}
-              draggedTaskId={draggedTaskId}
-            />
-          );
-        })}
-      </div>
-
-      {/* Add Task Modal */}
-      {showAddTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowAddTask(false)}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <GlassCard elevated className="p-6">
-              <h3 className="text-lg font-bold text-white mb-1">Create New Task</h3>
-              <p className="text-xs text-[#6B7290] mb-4">Add a task to the operations board</p>
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs text-[#6B7290] mb-1 block">Title</label>
-                  <input
-                    type="text"
-                    placeholder="Task title..."
-                    value={newTask.title || ""}
-                    onChange={(e) => setNewTask((p) => ({ ...p, title: e.target.value }))}
-                    className="w-full h-9 px-3 rounded-lg glass-input text-sm text-white placeholder:text-[#4A5068]"
-                  />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {columns.map((col) => {
+            const colTasks = tasksByColumn(col.id);
+            const ColumnIcon = col.icon;
+            return (
+              <div
+                key={col.id}
+                className="rounded-xl bg-white/[0.01] border border-white/[0.04] p-3 min-h-[400px]"
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, col.id)}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <ColumnIcon className="w-4 h-4" style={{ color: col.color }} />
+                    <span className="text-sm font-medium text-white">{col.label}</span>
+                    <Badge variant="outline" className="text-[10px] border-white/[0.08] text-[#6B7290] h-5">
+                      {colTasks.length}
+                    </Badge>
+                  </div>
+                  <button
+                    onClick={() => { setFormTitle(""); setCreateOpen(true); }}
+                    className="p-1 rounded hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <div>
-                  <label className="text-xs text-[#6B7290] mb-1 block">Description</label>
-                  <textarea
-                    placeholder="Task description..."
-                    value={newTask.description || ""}
-                    onChange={(e) => setNewTask((p) => ({ ...p, description: e.target.value }))}
-                    rows={3}
-                    className="w-full px-3 py-2 rounded-lg glass-input text-sm text-white placeholder:text-[#4A5068] resize-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs text-[#6B7290] mb-1 block">Priority</label>
-                    <select
-                      value={newTask.priority || "medium"}
-                      onChange={(e) => setNewTask((p) => ({ ...p, priority: e.target.value as Task["priority"] }))}
-                      className="w-full h-9 px-3 rounded-lg glass-input text-sm text-white bg-transparent"
-                    >
-                      <option value="low" className="bg-[#0F111A]">Low</option>
-                      <option value="medium" className="bg-[#0F111A]">Medium</option>
-                      <option value="high" className="bg-[#0F111A]">High</option>
-                      <option value="urgent" className="bg-[#0F111A]">Urgent</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-[#6B7290] mb-1 block">Due Date</label>
-                    <input
-                      type="date"
-                      value={newTask.dueDate || ""}
-                      onChange={(e) => setNewTask((p) => ({ ...p, dueDate: e.target.value }))}
-                      className="w-full h-9 px-3 rounded-lg glass-input text-sm text-white"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs text-[#6B7290] mb-1 block">Assignee</label>
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={newTask.assignee || ""}
-                      onChange={(e) => setNewTask((p) => ({ ...p, assignee: e.target.value, assigneeInitials: e.target.value.slice(0, 2).toUpperCase() }))}
-                      className="w-full h-9 px-3 rounded-lg glass-input text-sm text-white placeholder:text-[#4A5068]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-[#6B7290] mb-1 block">Tags (comma separated)</label>
-                    <input
-                      type="text"
-                      placeholder="Frontend, Bug"
-                      value={newTask.tags?.join(", ") || ""}
-                      onChange={(e) => setNewTask((p) => ({ ...p, tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean) }))}
-                      className="w-full h-9 px-3 rounded-lg glass-input text-sm text-white placeholder:text-[#4A5068]"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <AnimatePresence>
+                    {colTasks.map((task) => (
+                      <motion.div
+                        key={task.id}
+                        layout
+                        draggable
+                        onDragStart={() => handleDragStart(task.id)}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="p-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] border border-white/[0.04] cursor-grab active:cursor-grabbing group"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{task.title}</p>
+                            {task.description && (
+                              <p className="text-[11px] text-[#6B7290] mt-0.5 line-clamp-2">{task.description}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => deleteTask(task.id)}
+                              className="p-1 rounded hover:bg-white/5 text-[#6B7290] hover:text-[#FF4757]"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] h-5"
+                            style={{
+                              borderColor: `${getPriorityColor(task.priority)}40`,
+                              color: getPriorityColor(task.priority),
+                              backgroundColor: `${getPriorityColor(task.priority)}10`,
+                            }}
+                          >
+                            <Flag className="w-2.5 h-2.5 mr-1" />
+                            {task.priority}
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px] border-white/[0.08] text-[#6B7290] h-5">
+                            {task.assignee_type === "AI" ? <Bot className="w-2.5 h-2.5 mr-1" /> : <User className="w-2.5 h-2.5 mr-1" />}
+                            {task.assignee_type}
+                          </Badge>
+                          {task.due_date && (
+                            <Badge variant="outline" className="text-[10px] border-white/[0.08] text-[#6B7290] h-5">
+                              <Clock className="w-2.5 h-2.5 mr-1" />
+                              {new Date(task.due_date).toLocaleDateString()}
+                            </Badge>
+                          )}
+                        </div>
+                        {task.progress > 0 && (
+                          <div className="mt-2">
+                            <ProgressBar
+                              value={task.progress}
+                              color={task.status === "done" ? "#00E5A0" : "#00D4FF"}
+                            />
+                          </div>
+                        )}
+                        {task.tags && task.tags.length > 0 && (
+                          <div className="flex items-center gap-1 mt-2 flex-wrap">
+                            {task.tags.map((tag) => (
+                              <span key={tag} className="text-[10px] text-[#4A5068] bg-white/[0.03] px-1.5 py-0.5 rounded">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {colTasks.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-xs text-[#4A5068]">No tasks</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex gap-3 mt-6">
-                <Button variant="outline" className="flex-1" onClick={() => setShowAddTask(false)}>Cancel</Button>
-                <Button variant="neon" className="flex-1" onClick={handleAddTask}>Create Task</Button>
-              </div>
-            </GlassCard>
-          </motion.div>
+            );
+          })}
         </div>
       )}
+
+      {/* Create Task Dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="bg-[#0B0D14] border-white/[0.08] text-white max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <Plus className="w-5 h-5 text-[#00D4FF]" />
+              New Task
+            </DialogTitle>
+            <DialogDescription className="text-[#6B7290]">
+              Create a new task and assign it to a human or AI agent
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div>
+              <label className="text-xs text-[#6B7290] mb-1.5 block">Title *</label>
+              <Input
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="e.g., Implement OAuth flow"
+                className="bg-white/[0.03] border-white/[0.06] text-white placeholder:text-[#4A5068]"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-[#6B7290] mb-1.5 block">Description</label>
+              <textarea
+                value={formDesc}
+                onChange={(e) => setFormDesc(e.target.value)}
+                placeholder="Task details..."
+                rows={3}
+                className="w-full rounded-md bg-white/[0.03] border border-white/[0.06] text-white placeholder:text-[#4A5068] text-sm p-2.5 resize-none focus:outline-none focus:ring-1 focus:ring-[#00D4FF]/30"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-[#6B7290] mb-1.5 block">Priority</label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {priorities.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setFormPriority(p.id as any)}
+                      className={`p-2 rounded-lg border text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+                        formPriority === p.id
+                          ? "border-[#00D4FF]/40 bg-[#00D4FF]/10 text-[#00D4FF]"
+                          : "border-white/[0.06] bg-white/[0.02] text-[#6B7290] hover:border-white/[0.12]"
+                      }`}
+                    >
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-[#6B7290] mb-1.5 block">Assignee Type</label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {assigneeTypes.map((a) => (
+                    <button
+                      key={a.id}
+                      onClick={() => setFormAssigneeType(a.id as any)}
+                      className={`p-2 rounded-lg border text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+                        formAssigneeType === a.id
+                          ? "border-[#00D4FF]/40 bg-[#00D4FF]/10 text-[#00D4FF]"
+                          : "border-white/[0.06] bg-white/[0.02] text-[#6B7290] hover:border-white/[0.12]"
+                      }`}
+                    >
+                      <a.icon className="w-3 h-3" />
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-[#6B7290] mb-1.5 block">Due Date</label>
+                <Input
+                  type="date"
+                  value={formDueDate}
+                  onChange={(e) => setFormDueDate(e.target.value)}
+                  className="bg-white/[0.03] border-white/[0.06] text-white placeholder:text-[#4A5068] [color-scheme:dark]"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-[#6B7290] mb-1.5 block">Tags (comma separated)</label>
+                <Input
+                  value={formTags}
+                  onChange={(e) => setFormTags(e.target.value)}
+                  placeholder="design, frontend, urgent"
+                  className="bg-white/[0.03] border-white/[0.06] text-white placeholder:text-[#4A5068]"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setCreateOpen(false); resetForm(); }}
+                className="border-white/[0.08] text-[#6B7290] hover:text-white"
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={createTask}
+                disabled={creating || !formTitle.trim()}
+                className="bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-[#06070A]"
+              >
+                {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
+                Create Task
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
