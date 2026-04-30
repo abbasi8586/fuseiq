@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: tasks, error } = await supabase
-    .from("tasks")
+  const { data: workflows, error } = await supabase
+    .from("workflows")
     .select("*")
     .order("created_at", { ascending: false });
 
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(tasks || []);
+  return NextResponse.json(workflows || []);
 }
 
 export async function POST(req: NextRequest) {
@@ -31,19 +31,15 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const { data: task, error } = await supabase
-    .from("tasks")
+  const { data: workflow, error } = await supabase
+    .from("workflows")
     .insert({
       workspace_id: body.workspace_id,
-      title: body.title,
+      name: body.name,
       description: body.description,
-      status: body.status || "todo",
-      priority: body.priority || "medium",
-      assignee_id: body.assignee_id,
-      assignee_type: body.assignee_type || "Human",
-      due_date: body.due_date,
-      progress: body.progress || 0,
-      tags: body.tags || [],
+      nodes: body.nodes || [],
+      edges: body.edges || [],
+      is_active: body.is_active ?? true,
       created_by: user.id,
     })
     .select()
@@ -53,5 +49,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(task, { status: 201 });
+  return NextResponse.json(workflow, { status: 201 });
 }

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(agents);
+  return NextResponse.json(agents || []);
 }
 
 export async function POST(req: NextRequest) {
@@ -34,15 +34,16 @@ export async function POST(req: NextRequest) {
   const { data: agent, error } = await supabase
     .from("agents")
     .insert({
+      workspace_id: body.workspace_id,
       name: body.name,
       framework: body.framework,
       provider_id: body.provider_id,
       role: body.role,
       department: body.department,
+      description: body.description,
       config: body.config || {},
       status: "online",
       agent_type: "AI",
-      workspace_id: body.workspace_id || null,
       efficiency_score: 0,
       total_executions: 0,
       total_cost: 0,

@@ -9,16 +9,25 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: tasks, error } = await supabase
-    .from("tasks")
+  const { searchParams } = new URL(req.url);
+  const channelId = searchParams.get("channelId");
+
+  let query = supabase
+    .from("messages")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
+
+  if (channelId) {
+    query = query.eq("channel_id", channelId);
+  }
+
+  const { data: messages, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(tasks || []);
+  return NextResponse.json(messages || []);
 }
 
 export async function POST(req: NextRequest) {
@@ -31,20 +40,17 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const { data: task, error } = await supabase
-    .from("tasks")
+  const { data: message, error } = await supabase
+    .from("messages")
     .insert({
-      workspace_id: body.workspace_id,
-      title: body.title,
-      description: body.description,
-      status: body.status || "todo",
-      priority: body.priority || "medium",
-      assignee_id: body.assignee_id,
-      assignee_type: body.assignee_type || "Human",
-      due_date: body.due_date,
-      progress: body.progress || 0,
-      tags: body.tags || [],
-      created_by: user.id,
+      channel_id: body.channel_id,
+      author_id: user.id,
+      author_name: body.author_name || "User",
+      author_type: body.author_type || "Human",
+      content: body.content,
+      thread_id: body.thread_id || null,
+      reactions: body.reactions || {},
+      is_pinned: body.is_pinned || false,
     })
     .select()
     .single();
@@ -53,5 +59,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(task, { status: 201 });
+  return NextResponse.json(message, { status: 201 });
 }

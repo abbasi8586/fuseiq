@@ -17,7 +17,18 @@ export async function PATCH(
 
   const { data: task, error } = await supabase
     .from("tasks")
-    .update(body)
+    .update({
+      title: body.title,
+      description: body.description,
+      status: body.status,
+      priority: body.priority,
+      assignee_id: body.assignee_id,
+      assignee_type: body.assignee_type,
+      due_date: body.due_date,
+      progress: body.progress,
+      tags: body.tags,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id)
     .select()
     .single();

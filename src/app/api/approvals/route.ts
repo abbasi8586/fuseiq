@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(approvals);
+  return NextResponse.json(approvals || []);
 }
 
 export async function PATCH(req: NextRequest) {
@@ -47,6 +47,19 @@ export async function PATCH(req: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Log to activity_logs
+  await supabase.from("activity_logs").insert({
+    workspace_id: approval.workspace_id,
+    actor_id: user.id,
+    actor_type: "user",
+    actor_name: "User",
+    action: `approval.${status}`,
+    target_type: "approval",
+    target_id: id,
+    target_name: approval.action,
+    metadata: { resolution_notes },
+  });
 
   return NextResponse.json(approval);
 }
