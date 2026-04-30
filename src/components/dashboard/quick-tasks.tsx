@@ -21,7 +21,7 @@ const priorityConfig = {
 
 const statusConfig = {
   todo: { label: "To Do", color: "#4A5068" },
-  "in-progress": { label: "In Progress", color: "#00D4FF" },
+  "in_progress": { label: "In Progress", color: "#00D4FF" },
   review: { label: "Review", color: "#FFC857" },
   done: { label: "Done", color: "#00E5A0" },
 };
@@ -67,7 +67,7 @@ export function QuickTasks({ tasks }: QuickTasksProps) {
               >
                 {/* Status indicator */}
                 <div className="shrink-0">
-                  <StatusDot status={task.status === "in-progress" ? "busy" : "online"} size="sm" />
+                  <StatusDot status={task.status === "in_progress" ? "busy" : "online"} size="sm" />
                 </div>
 
                 {/* Task info */}

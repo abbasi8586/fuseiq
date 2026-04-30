@@ -25,9 +25,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { APIKeysSection } from "./api-keys-section";
 
 const tabs = [
   { id: "providers", label: "Providers", icon: Key },
+  { id: "api-keys", label: "API Keys", icon: Key },
   { id: "workspace", label: "Workspace", icon: Globe },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "billing", label: "Billing", icon: CreditCard },
@@ -251,6 +253,12 @@ export default function SettingsPage() {
             </>
           )}
 
+          {activeTab === "api-keys" && <APIKeysSection />}
+
+          {activeTab === "api-keys" && <APIKeysSection />}
+
+          {activeTab === "api-keys" && <APIKeysSection />}
+
           {activeTab === "workspace" && (
             <GlassCard>
               <h3 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
@@ -308,6 +316,10 @@ export default function SettingsPage() {
                 ))}
               </div>
             </GlassCard>
+          )}
+
+          {activeTab === "api-keys" && (
+            <APIKeysSection />
           )}
 
           {activeTab === "billing" && (

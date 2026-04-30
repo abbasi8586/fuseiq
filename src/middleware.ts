@@ -30,13 +30,48 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith("/(dashboard)") && !user) {
+  // Protected routes - require auth
+  const protectedPaths = [
+    "/",
+    "/agents",
+    "/operations",
+    "/team",
+    "/staff",
+    "/comms",
+    "/swarm",
+    "/copilot",
+    "/marketplace",
+    "/analytics",
+    "/billing",
+    "/settings",
+    "/audit",
+    "/simulator",
+    "/approvals",
+  ];
+
+  const isProtected = protectedPaths.some(
+    (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
+  );
+
+  // Auth pages - redirect logged-in users away
+  const authPaths = ["/login", "/signup", "/auth/callback", "/demo"];
+  const isAuthPage = authPaths.some(
+    (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
+  );
+
+  // Demo mode - allow unauthenticated access to /demo
+  if (request.nextUrl.pathname === "/demo") {
+    return supabaseResponse;
+  }
+
+  if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 
-  if ((request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup") && user) {
+  if (isAuthPage && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
@@ -47,6 +82,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

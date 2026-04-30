@@ -19,10 +19,7 @@ interface ActivityFeedProps {
   className?: string;
 }
 
-const eventConfig: Record<
-  ActivityEvent["type"],
-  { icon: React.ElementType; color: string; bgColor: string }
-> = {
+const eventConfig: Record<string, { icon: React.ElementType; color: string; bgColor: string }> = {
   agent_start: { icon: Bot, color: "#00D4FF", bgColor: "#00D4FF15" },
   agent_complete: { icon: CheckCircle, color: "#00E5A0", bgColor: "#00E5A015" },
   agent_fail: { icon: AlertTriangle, color: "#FF4757", bgColor: "#FF475715" },

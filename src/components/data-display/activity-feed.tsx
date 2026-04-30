@@ -5,7 +5,7 @@ import { Bot, User, CheckCircle, AlertTriangle, XCircle, MessageSquare, Clock, F
 import { GlassCard } from "@/components/glass/glass-card";
 import type { ActivityEvent } from "@/types";
 
-const eventIcons = {
+const eventIcons: Record<string, React.ElementType> = {
   agent_start: Bot,
   agent_complete: CheckCircle,
   agent_fail: XCircle,

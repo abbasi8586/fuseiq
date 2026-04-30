@@ -1,8 +1,8 @@
 export interface Agent {
   id: string;
   name: string;
-  framework: 'Kimi' | 'CrewAI' | 'LangGraph' | 'AutoGen' | 'OpenAI' | 'Anthropic' | 'Google' | 'Custom' | 'Human';
-  provider: string;
+  framework: string;
+  provider?: string;
   status: 'online' | 'offline' | 'busy' | 'paused';
   type: 'AI' | 'Human';
   role?: string;
@@ -36,7 +36,7 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'todo' | 'in-progress' | 'review' | 'done';
+  status: 'todo' | 'in_progress' | 'review' | 'done';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   assignee?: string;
   assigneeName?: string;
@@ -93,7 +93,7 @@ export interface CostData {
 
 export interface ActivityEvent {
   id: string;
-  type: 'agent_start' | 'agent_complete' | 'agent_fail' | 'approval_request' | 'approval_resolve' | 'task_created' | 'task_completed' | 'message';
+  type: string;
   actor: string;
   target?: string;
   message: string;
