@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Zap, Shield, BarChart3, GitBranch, ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 const features = [
   {
@@ -37,26 +36,26 @@ export default function LandingPage() {
       {/* ── Header ───────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-lg text-gradient">FuseIQ</span>
-          </Link>
+          </a>
           <div className="flex items-center gap-4">
-            <Link
+            <a
               href="/login"
               className="text-sm text-[#B8BED8] hover:text-white transition-colors"
             >
               Sign In
-            </Link>
-            <Link
+            </a>
+            <a
               href="/login?signup=1"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Get Started
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </header>
@@ -88,21 +87,21 @@ export default function LandingPage() {
 
             <div className="flex items-center justify-center gap-4 flex-wrap">
               {/* Primary CTA — Start Free Trial */}
-              <Link
+              <a
                 href="/login?signup=1"
                 className="inline-flex items-center gap-2 px-8 h-12 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-lg hover:opacity-90 transition-opacity"
               >
                 Start Free Trial
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </a>
 
               {/* Secondary CTA — Live Demo */}
-              <Link
+              <a
                 href="/demo"
                 className="inline-flex items-center gap-2 px-8 h-12 rounded-xl border border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 transition-colors text-lg"
               >
                 Live Demo
-              </Link>
+              </a>
             </div>
           </motion.div>
 

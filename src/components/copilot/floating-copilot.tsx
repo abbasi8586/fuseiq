@@ -78,7 +78,7 @@ export function FloatingCopilot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-[60] w-[92vw] max-w-[360px] max-h-[500px] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-2xl"
+            className="fixed bottom-20 right-6 z-[60] w-[92vw] max-w-[360px] max-h-[70vh] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
