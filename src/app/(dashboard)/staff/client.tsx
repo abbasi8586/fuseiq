@@ -10,7 +10,6 @@ import {
   Clock,
   Sun,
   Moon,
-  Plus,
   Sparkles,
 } from "lucide-react";
 import { GlassCard } from "@/components/glass/glass-card";
@@ -18,6 +17,7 @@ import { StatusBadge, StatusDot } from "@/components/glass/status-badge";
 import { ProgressBar } from "@/components/glass/progress-bar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRealtimeArray } from "@/hooks/useRealtime";
 import type { StaffMember } from "@/types";
 
 const departments = ["All", "Engineering", "Product", "Marketing", "Data", "Support", "Design", "Sales", "Finance"];
@@ -70,12 +70,54 @@ interface Props {
 }
 
 export function StaffDirectoryClient({ initialStaff }: Props) {
+  const [staff, setStaff] = useState<StaffMember[]>(initialStaff);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const filteredStaff = initialStaff.filter((member) => {
+  // Real-time subscription for agents (staff updates)
+  useRealtimeArray<any>("agents", {
+    onInsert: (newAgent) => {
+      const newMember: StaffMember = {
+        id: newAgent.id,
+        name: newAgent.name,
+        role: newAgent.role || newAgent.framework || 'Agent',
+        department: newAgent.department || 'Engineering',
+        type: 'AI',
+        provider: newAgent.framework || 'Kimi',
+        status: newAgent.status || 'offline',
+        timezone: newAgent.timezone || 'UTC',
+        efficiency: newAgent.efficiency_score || 85,
+        skills: [newAgent.framework || 'AI'],
+        email: `${newAgent.name?.toLowerCase()?.replace(/\s+/g, '.')}@fuseiq.ai`,
+      };
+      setStaff((prev) => {
+        if (prev.find((s) => s.id === newMember.id)) return prev;
+        return [...prev, newMember];
+      });
+    },
+    onUpdate: (updatedAgent) => {
+      setStaff((prev) => prev.map((s) => {
+        if (s.id !== updatedAgent.id) return s;
+        return {
+          ...s,
+          name: updatedAgent.name || s.name,
+          role: updatedAgent.role || updatedAgent.framework || s.role,
+          department: updatedAgent.department || s.department,
+          status: updatedAgent.status || s.status,
+          efficiency: updatedAgent.efficiency_score || s.efficiency,
+          timezone: updatedAgent.timezone || s.timezone,
+        };
+      }));
+    },
+    onDelete: (deletedId) => {
+      setStaff((prev) => prev.filter((s) => s.id !== deletedId));
+    },
+    enableToasts: false,
+  });
+
+  const filteredStaff = staff.filter((member) => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.department.toLowerCase().includes(searchQuery.toLowerCase());
@@ -109,9 +151,9 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
             transition={{ delay: 0.1 }}
             className="text-sm text-[#6B7290] mt-2 ml-13"
           >
-            <span className="text-[#00D4FF] font-medium">{initialStaff.length}</span> members · 
-            <span className="text-[#B829DD] font-medium"> {initialStaff.filter((s) => s.type === "AI").length}</span> AI · 
-            <span className="text-[#FF6B35] font-medium"> {initialStaff.filter((s) => s.type === "Human").length}</span> Human
+            <span className="text-[#00D4FF] font-medium">{staff.length}</span> members · 
+            <span className="text-[#B829DD] font-medium"> {staff.filter((s) => s.type === "AI").length}</span> AI · 
+            <span className="text-[#FF6B35] font-medium"> {staff.filter((s) => s.type === "Human").length}</span> Human
           </motion.p>
         </div>
         <motion.div

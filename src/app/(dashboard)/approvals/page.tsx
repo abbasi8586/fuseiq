@@ -1,5 +1,6 @@
 "use client";
 
+import { useRealtimeArray } from "@/hooks/useRealtime";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -139,6 +140,24 @@ export default function ApprovalsPage() {
     if (statusFilter !== "all" && a.status !== statusFilter) return false;
     if (riskFilter !== "all" && a.risk_level !== riskFilter) return false;
     return true;
+  });
+
+  // Real-time subscription for approvals
+  useRealtimeArray<Approval>("approvals", {
+    onInsert: (newApproval) => {
+      setApprovals((prev) => {
+        if (prev.find((a) => a.id === newApproval.id)) return prev;
+        return [newApproval, ...prev];
+      });
+    },
+    onUpdate: (updatedApproval) => {
+      setApprovals((prev) => prev.map((a) => (a.id === updatedApproval.id ? updatedApproval : a)));
+    },
+    onDelete: (deletedId) => {
+      setApprovals((prev) => prev.filter((a) => a.id !== deletedId));
+    },
+    enableToasts: true,
+    itemName: "Approval",
   });
 
   const pending = approvals.filter((a) => a.status === "pending").length;

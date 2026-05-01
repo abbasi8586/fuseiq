@@ -1,5 +1,6 @@
 "use client";
 
+import { useRealtimeArray } from "@/hooks/useRealtime";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -225,6 +226,23 @@ export default function OperationsPage() {
       setDraggedTask(null);
     }
   };
+
+  // Real-time subscription for tasks
+  useRealtimeArray<Task>("tasks", {
+    onInsert: (newTask) => {
+      setTasks((prev) => {
+        if (prev.find((t) => t.id === newTask.id)) return prev;
+        return [newTask, ...prev];
+      });
+    },
+    onUpdate: (updatedTask) => {
+      setTasks((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
+    },
+    onDelete: (deletedId) => {
+      setTasks((prev) => prev.filter((t) => t.id !== deletedId));
+    },
+    enableToasts: false,
+  });
 
   // Metrics
   const total = tasks.length;
