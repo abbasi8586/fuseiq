@@ -94,7 +94,6 @@ const plans = [
 
 export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState("starter");
-  const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const fetchSubscription = useCallback(async () => {
@@ -167,15 +166,12 @@ export default function BillingPage() {
           </h1>
           <p className="text-sm text-[#6B7290] mt-1">Manage your subscription and usage</p>
         </div>
-        <Badge
-          variant="outline"
-          className="text-[10px] border-[#00D4FF]/30 text-[#00D4FF]"
-        >
+        <Badge variant="outline" className="text-[10px] border-[#00D4FF]/30 text-[#00D4FF]">
           Current: {plans.find((p) => p.id === currentPlan)?.name}
         </Badge>
       </div>
 
-      {/* Usage Overview */}
+      {/* Usage Overview — FIXED: bars capped at 100%, overage in gold */}
       <GlassCard>
         <h3 className="text-lg font-semibold text-white mb-4">Usage This Month</h3>
         <div className="grid grid-cols-3 gap-4">
@@ -184,27 +180,42 @@ export default function BillingPage() {
             { label: "API Calls", used: usage.apiCalls.used, limit: usage.apiCalls.limit, icon: Activity, color: "#00E5A0" },
             { label: "Storage (GB)", used: usage.storage.used, limit: usage.storage.limit, icon: Database, color: "#B829DD" },
           ].map((item) => {
-            const percentage = (item.used / item.limit) * 100;
+            const rawPercentage = (item.used / item.limit) * 100;
+            const isOverLimit = rawPercentage > 100;
+            const displayPercentage = Math.min(rawPercentage, 100);
             const Icon = item.icon;
+            const barColor = isOverLimit ? "#D4AF37" : item.color;
             return (
               <div key={item.label} className="p-3 rounded-lg bg-white/[0.02]">
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon className="w-4 h-4" style={{ color: item.color }} />
+                  <Icon className="w-4 h-4" style={{ color: barColor }} />
                   <span className="text-xs text-[#6B7290]">{item.label}</span>
+                  {isOverLimit && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#D4AF37]/15 text-[#D4AF37] font-bold">
+                      Exceeded
+                    </span>
+                  )}
                 </div>
                 <p className="text-lg font-bold text-white">
                   {item.used.toLocaleString()}{" "}
                   <span className="text-sm text-[#6B7290]">/ {item.limit.toLocaleString()}</span>
                 </p>
-                <div className="w-full h-1.5 rounded-full bg-white/[0.04] mt-2 overflow-hidden">
+                <div className="w-full h-1.5 rounded-full bg-white/[0.04] mt-2 overflow-hidden relative">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${percentage}%` }}
+                    animate={{ width: `${displayPercentage}%` }}
                     className="h-full rounded-full"
-                    style={{ backgroundColor: item.color }}
+                    style={{
+                      backgroundColor: barColor,
+                      boxShadow: isOverLimit ? `0 0 8px ${barColor}40` : undefined,
+                    }}
                   />
                 </div>
-                <p className="text-[10px] text-[#4A5068] mt-1">{percentage.toFixed(1)}% used</p>
+                <p className="text-[10px] mt-1" style={{ color: isOverLimit ? "#D4AF37" : "#4A5068" }}>
+                  {isOverLimit
+                    ? `${rawPercentage.toFixed(0)}% used — Upgrade to continue`
+                    : `${rawPercentage.toFixed(1)}% used`}
+                </p>
               </div>
             );
           })}
