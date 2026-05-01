@@ -35,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function CostChart({ data }: CostChartProps) {
   return (
-    <div className="w-full h-full min-h-[280px]">
+    <div className="w-full" style={{ height: 280 }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}

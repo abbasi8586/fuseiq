@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
             Cost Over Time
           </h3>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={costData}>
                 <defs>
                   <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
@@ -204,7 +204,7 @@ export default function AnalyticsPage() {
             Executions by Framework
           </h3>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={220}>
               <BarChart data={frameworkData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="name" stroke="#4A5068" fontSize={12} />
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
             Agent Efficiency
           </h3>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
                   data={efficiencyData}

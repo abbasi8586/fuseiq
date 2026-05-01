@@ -275,6 +275,7 @@ function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={mode === "signup" ? 8 : 6}
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   className="pl-10 pr-10 glass-input text-white placeholder:text-[#4A5068]"
                 />
                 <button
@@ -425,11 +426,11 @@ function LoginForm() {
           {mode === "signup" && (
             <p className="text-center text-xs text-[#4A5068]">
               By creating an account, you agree to our{" "}
-              <Link href="#" className="text-[#6B7290] hover:text-[#B8BED8] underline">
+              <Link href="/terms" className="text-[#6B7290] hover:text-[#B8BED8] underline">
                 Terms
               </Link>{" "}
               and{" "}
-              <Link href="#" className="text-[#6B7290] hover:text-[#B8BED8] underline">
+              <Link href="/privacy" className="text-[#6B7290] hover:text-[#B8BED8] underline">
                 Privacy Policy
               </Link>
             </p>

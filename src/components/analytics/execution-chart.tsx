@@ -51,7 +51,7 @@ export function ExecutionChart({ data }: ExecutionChartProps) {
   const [hoveredLine, setHoveredLine] = useState<string | null>(null);
 
   return (
-    <div className="w-full h-full min-h-[300px]">
+    <div className="w-full" style={{ height: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}

@@ -7,8 +7,42 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "FuseIQ — AI Agent Command Center",
-  description: "The AI agent command center that puts you in control",
+  title: {
+    default: "FuseIQ — AI Agent Command Center",
+    template: "%s — FuseIQ",
+  },
+  description: "Monitor, orchestrate, and approve every AI agent from one unified dashboard. BYOK architecture, real-time cost tracking, and human-in-the-loop control.",
+  keywords: ["AI agents", "agent orchestration", "LLM management", "AI workforce", "multi-agent systems", "BYOK"],
+  authors: [{ name: "Abbasi Global LLC" }],
+  creator: "FuseIQ",
+  publisher: "Abbasi Global LLC",
+  robots: "index, follow",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://fuseiq.io",
+    siteName: "FuseIQ",
+    title: "FuseIQ — AI Agent Command Center",
+    description: "Monitor, orchestrate, and approve every AI agent from one unified dashboard.",
+    images: [{
+      url: "https://fuseiq.io/logo-512.png",
+      width: 512,
+      height: 512,
+      alt: "FuseIQ Logo",
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FuseIQ — AI Agent Command Center",
+    description: "Monitor, orchestrate, and approve every AI agent from one unified dashboard.",
+    images: ["https://fuseiq.io/logo-512.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 import { CommandPalette } from "@/components/copilot/command-palette";

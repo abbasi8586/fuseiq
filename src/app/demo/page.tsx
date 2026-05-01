@@ -546,7 +546,7 @@ export default function DemoPage() {
               <AnimatedSection>
                 <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Executions Over Time</h3>
                 <GlassCard className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={executionData}>
                       <defs>
                         <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
@@ -618,7 +618,7 @@ export default function DemoPage() {
                 <GlassCard className="h-full">
                   <h3 className="text-sm font-semibold text-white mb-4">Cost by Agent (Today)</h3>
                   <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
                           data={costByAgent}
@@ -657,7 +657,7 @@ export default function DemoPage() {
                 <GlassCard className="h-full">
                   <h3 className="text-sm font-semibold text-white mb-4">Efficiency Comparison</h3>
                   <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height={220}>
                       <BarChart data={efficiencyData} layout="vertical">
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                         <XAxis type="number" domain={[0, 100]} stroke="#4A5068" fontSize={12} />
