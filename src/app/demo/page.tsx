@@ -506,11 +506,11 @@ export default function DemoPage() {
               </div>
             </AnimatedSection>
 
-            {/* Tasks + Chart Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AnimatedSection>
+            {/* Tasks + Chart Row — equal height columns */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+              <AnimatedSection className="h-full">
                 <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Active Tasks</h3>
-                <GlassCard>
+                <GlassCard className="h-full">
                   <div className="space-y-3">
                     {demoTasks.map((task) => (
                       <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
@@ -543,12 +543,12 @@ export default function DemoPage() {
                 </GlassCard>
               </AnimatedSection>
 
-              {/* Right column: Executions + Cost Breakdown stacked */}
-              <div className="space-y-6">
-                <AnimatedSection>
+              {/* Right column: Executions + Cost Breakdown stacked, fills equal height */}
+              <div className="flex flex-col gap-6 h-full">
+                <AnimatedSection className="flex-1 min-h-0 flex flex-col">
                   <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Executions Over Time</h3>
-                  <GlassCard className="h-[300px]">
-                    <ResponsiveContainer width="100%" height={280}>
+                  <GlassCard className="flex-1 min-h-0">
+                    <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={executionData}>
                         <defs>
                           <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
@@ -568,9 +568,9 @@ export default function DemoPage() {
                   </GlassCard>
                 </AnimatedSection>
 
-                <AnimatedSection>
+                <AnimatedSection className="flex-1 min-h-0 flex flex-col">
                   <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Cost Breakdown by Agent (Today)</h3>
-                  <GlassCard>
+                  <GlassCard className="flex-1 min-h-0">
                     <div className="space-y-3">
                       {costByAgent.filter(a => a.name !== "Others").sort((a, b) => b.value - a.value).map((agent) => (
                         <div key={agent.name} className="flex items-center gap-3">
