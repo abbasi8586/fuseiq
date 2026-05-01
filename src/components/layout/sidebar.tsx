@@ -12,7 +12,6 @@ import {
   KanbanSquare,
   CheckCircle,
   BarChart3,
-  Zap,
   Sparkles,
   ChevronLeft,
   ChevronRight,
@@ -24,6 +23,7 @@ import {
   Hash,
   Bell,
 } from "lucide-react";
+import { LogoIcon } from "@/components/logo";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/stores/workspace-store";
 
@@ -101,9 +101,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex items-center h-14 px-4 border-b border-white/[0.06]">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center shrink-0">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
+          <LogoIcon size="md" />
           {!collapsed && (
             <motion.span
               initial={{ opacity: 0 }}

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Zap, Shield, BarChart3, GitBranch, ArrowRight } from "lucide-react";
+import { LogoIcon } from "@/components/logo";
 
 const features = [
   {
@@ -37,9 +38,7 @@ export default function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
+            <LogoIcon size="md" />
             <span className="font-bold text-lg text-gradient">FuseIQ</span>
           </a>
           <div className="flex items-center gap-4">
@@ -181,7 +180,7 @@ export default function LandingPage() {
       <footer className="py-8 px-6 border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[#4A5068]">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4" />
+            <LogoIcon size="sm" />
             <span>FuseIQ v1.0 — Abbasi Global LLC</span>
           </div>
           <div className="flex items-center gap-4">

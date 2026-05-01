@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Zap, Home } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
+import { LogoIcon } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 
 export default function NotFoundPage() {
@@ -13,8 +14,8 @@ export default function NotFoundPage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center max-w-md"
       >
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#00D4FF]/20">
-          <Zap className="w-10 h-10 text-white" />
+        <div className="flex items-center justify-center mx-auto mb-6">
+          <LogoIcon size="2xl" />
         </div>
         <h1 className="text-6xl font-bold text-white mb-2">404</h1>
         <p className="text-xl text-[#6B7290] mb-2">Page Not Found</p>
