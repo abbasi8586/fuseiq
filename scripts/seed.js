@@ -1,5 +1,5 @@
 // ============================================
-// FUSEIQ v3.0 — DATABASE SEED SCRIPT
+// FUSEIQ v1.0 — DATABASE SEED SCRIPT
 // Run after migration is applied: node scripts/seed.js
 // Uses service_role key to bypass RLS during seeding
 // ============================================
@@ -211,7 +211,7 @@ async function seed() {
       { channel: 'marketing', author: 'Emily Rodriguez', type: 'Human', content: 'Great title! Let me review and schedule for Tuesday publish.' },
       { channel: 'random', author: 'Scout', type: 'AI', content: 'Fun fact: Our agents have processed 10,000+ tasks this month!' },
       { channel: 'random', author: 'Marcus Johnson', type: 'Human', content: 'That is incredible. The ROI numbers are going to look amazing.' },
-      { channel: 'announcements', author: 'Awais Abbasi', type: 'Human', content: '🚀 FuseIQ v3.0 is now live! Check out the new Command Center dashboard.' },
+      { channel: 'announcements', author: 'Awais Abbasi', type: 'Human', content: '🚀 FuseIQ v1.0 is now live! Check out the new Command Center dashboard.' },
       { channel: 'announcements', author: 'Rook AI', type: 'AI', content: 'System update complete. All agents operational. Uptime: 99.97%' }
     ];
 

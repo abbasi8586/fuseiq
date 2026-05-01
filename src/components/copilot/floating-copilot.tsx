@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Send, Bot, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Sparkles, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function FloatingCopilot() {
@@ -27,7 +26,6 @@ export function FloatingCopilot() {
     setLoading(true);
     setInput("");
 
-    // Simulate AI response
     setTimeout(() => {
       setLoading(false);
       const response = getSimulatedResponse(input);
@@ -54,20 +52,21 @@ export function FloatingCopilot() {
 
   return (
     <>
-      {/* Floating trigger button */}
+      {/* Floating trigger — compact 48×48 icon on all screens, pill on desktop via hover */}
       <AnimatePresence>
         {!open && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-sm shadow-lg shadow-[#D4AF37]/30 hover:shadow-xl hover:shadow-[#D4AF37]/40 transition-shadow"
+            className="fixed bottom-6 right-6 z-[60] w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-3 rounded-full md:rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold shadow-lg shadow-[#D4AF37]/30 hover:shadow-xl hover:shadow-[#D4AF37]/50 transition-shadow flex items-center justify-center gap-0 md:gap-2"
+            aria-label="Ask Co-Pilot"
           >
-            <Sparkles className="w-4 h-4" />
-            Ask Co-Pilot
+            <Sparkles className="w-5 h-5" />
+            <span className="hidden md:inline text-sm">Ask Co-Pilot</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -79,7 +78,7 @@ export function FloatingCopilot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-50 w-[360px] max-h-[500px] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-6 right-6 z-[60] w-[92vw] max-w-[360px] max-h-[500px] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
@@ -91,7 +90,7 @@ export function FloatingCopilot() {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1 rounded hover:bg-white/5 text-[#6B7290] hover:text-white"
+                className="p-1 rounded hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>

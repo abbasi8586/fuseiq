@@ -567,6 +567,37 @@ export default function DemoPage() {
                 </GlassCard>
               </AnimatedSection>
             </div>
+
+            {/* Cost Breakdown by Agent — fills dead space under Executions chart */}
+            <AnimatedSection className="mt-6">
+              <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Cost Breakdown by Agent (Today)</h3>
+              <GlassCard>
+                <div className="space-y-3">
+                  {costByAgent.filter(a => a.name !== "Others").sort((a, b) => b.value - a.value).map((agent) => (
+                    <div key={agent.name} className="flex items-center gap-3">
+                      <span className="text-xs text-[#B8BED8] w-32 truncate shrink-0">{agent.name}</span>
+                      <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${(agent.value / 12.4) * 100}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          viewport={{ once: true }}
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: agent.color }}
+                        />
+                      </div>
+                      <span className="text-xs text-white font-medium w-14 text-right">${agent.value.toFixed(2)}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-3 pt-2 border-t border-white/[0.04]">
+                    <span className="text-xs text-[#6B7290] w-32 truncate shrink-0">Total Today</span>
+                    <div className="flex-1" />
+                    <span className="text-xs text-[#D4AF37] font-semibold w-14 text-right">${costByAgent.reduce((s, a) => s + a.value, 0).toFixed(2)}</span>
+                  </div>
+                </div>
+              </GlassCard>
+            </AnimatedSection>
+
           </div>
         </section>
 

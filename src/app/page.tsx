@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { Zap, Shield, BarChart3, GitBranch, ArrowRight, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Zap, Shield, BarChart3, GitBranch, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -36,30 +34,34 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#06070A] text-white overflow-hidden">
-      {/* Hero */}
+      {/* ── Header ───────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-lg text-gradient">FuseIQ</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-[#B8BED8] hover:text-white transition-colors">
+            <Link
+              href="/login"
+              className="text-sm text-[#B8BED8] hover:text-white transition-colors"
+            >
               Sign In
             </Link>
-            <Link href="/login">
-              <Button className="neon-button border-0 text-sm">
-                Launch Dashboard
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+            <Link
+              href="/login?signup=1"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              Get Started
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* ── Hero ─────────────────────────────────────────── */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
@@ -67,29 +69,39 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-[#00D4FF] text-sm font-medium mb-6">
-              <span className="w-2 h-2 rounded-full bg-[#00D4FF] animate-pulse" />
-              v3.0 New Platform Edition
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] text-sm font-medium mb-6">
+              <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
+              v1.0 New Platform Edition
             </div>
+
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              The AI Agent{" "}
-              <span className="text-gradient">Command Center</span>
+              Command Your{" "}
+              <span className="text-gradient">AI Workforce</span>
+              <br />
+              in Real Time
             </h1>
+
             <p className="text-xl text-[#6B7290] max-w-2xl mx-auto mb-10">
-              Bring your own keys. Orchestrate your swarm. Monitor everything in real-time through a 
-              cyber-luxury glassmorphism dashboard built for 2030.
+              Monitor, orchestrate, and approve every AI agent from one unified dashboard.
+              Built for teams who treat AI like a team member, not a black box.
             </p>
-            <div className="flex items-center justify-center gap-4">
-              <Link href="/login">
-                <Button size="lg" className="neon-button border-0 text-lg px-8">
-                  Enter Command Center
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
+
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              {/* Primary CTA — Start Free Trial */}
+              <Link
+                href="/login?signup=1"
+                className="inline-flex items-center gap-2 px-8 h-12 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-lg hover:opacity-90 transition-opacity"
+              >
+                Start Free Trial
+                <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/demo">
-                <Button size="lg" variant="outline" className="border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 px-8">
-                  View Demo
-                </Button>
+
+              {/* Secondary CTA — Live Demo */}
+              <Link
+                href="/demo"
+                className="inline-flex items-center gap-2 px-8 h-12 rounded-xl border border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 transition-colors text-lg"
+              >
+                Live Demo
               </Link>
             </div>
           </motion.div>
@@ -103,9 +115,9 @@ export default function LandingPage() {
           >
             {[
               { value: "7+", label: "LLM Providers" },
-              { value: "12", label: "Team Members" },
+              { value: "12", label: "AI Team Members" },
               { value: "98.7%", label: "Success Rate" },
-              { value: "0.042s", label: "Avg Cost/Run" },
+              { value: "$0.007", label: "Avg Cost/Run" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
@@ -116,7 +128,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* ── Features ─────────────────────────────────────── */}
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -146,7 +158,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Tech Stack */}
+      {/* ── Tech Stack ───────────────────────────────────── */}
       <section className="py-20 px-6 border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Built for Scale</h2>
@@ -166,12 +178,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── Footer ───────────────────────────────────────── */}
       <footer className="py-8 px-6 border-t border-white/[0.06]">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-sm text-[#4A5068]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[#4A5068]">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4" />
-            <span>FuseIQ v3.0 — Abbasi Global Ltd</span>
+            <span>FuseIQ v1.0 — Abbasi Global LLC</span>
           </div>
           <div className="flex items-center gap-4">
             <span>Florida, USA</span>

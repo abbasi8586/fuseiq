@@ -1,4 +1,4 @@
-# FuseIQ v3.0 — AI Agent Orchestration Platform
+# FuseIQ v1.0 — AI Agent Orchestration Platform
 
 > **Ship AI agents. Monitor them live. Scale without fear.**
 
