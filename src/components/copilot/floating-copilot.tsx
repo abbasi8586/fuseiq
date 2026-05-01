@@ -75,10 +75,11 @@ export function FloatingCopilot() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             className="fixed bottom-20 right-6 z-[60] w-[92vw] max-w-[360px] max-h-[70vh] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-2xl"
+            style={{ position: 'fixed' }}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">

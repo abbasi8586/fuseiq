@@ -44,12 +44,14 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <a
               href="/login"
+              onClick={(e) => { if (!e.defaultPrevented) window.location.href = '/login'; }}
               className="text-sm text-[#B8BED8] hover:text-white transition-colors"
             >
               Sign In
             </a>
             <a
               href="/login?signup=1"
+              onClick={(e) => { if (!e.defaultPrevented) window.location.href = '/login?signup=1'; }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Get Started

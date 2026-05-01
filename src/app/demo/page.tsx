@@ -543,57 +543,60 @@ export default function DemoPage() {
                 </GlassCard>
               </AnimatedSection>
 
-              <AnimatedSection>
-                <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Executions Over Time</h3>
-                <GlassCard className="h-[300px]">
-                  <ResponsiveContainer width="100%" height={280}>
-                    <AreaChart data={executionData}>
-                      <defs>
-                        <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#00D4FF" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#00D4FF" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="day" stroke="#4A5068" fontSize={12} />
-                      <YAxis stroke="#4A5068" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#0B0D14", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", color: "#fff" }}
-                      />
-                      <Area type="monotone" dataKey="executions" stroke="#00D4FF" fill="url(#execGradient)" strokeWidth={2} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </GlassCard>
-              </AnimatedSection>
+              {/* Right column: Executions + Cost Breakdown stacked */}
+              <div className="space-y-6">
+                <AnimatedSection>
+                  <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Executions Over Time</h3>
+                  <GlassCard className="h-[300px]">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <AreaChart data={executionData}>
+                        <defs>
+                          <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00D4FF" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#00D4FF" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <XAxis dataKey="day" stroke="#4A5068" fontSize={12} />
+                        <YAxis stroke="#4A5068" fontSize={12} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: "#0B0D14", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", color: "#fff" }}
+                        />
+                        <Area type="monotone" dataKey="executions" stroke="#00D4FF" fill="url(#execGradient)" strokeWidth={2} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </GlassCard>
+                </AnimatedSection>
 
-              <AnimatedSection className="mt-6">
-                <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Cost Breakdown by Agent (Today)</h3>
-                <GlassCard>
-                  <div className="space-y-3">
-                    {costByAgent.filter(a => a.name !== "Others").sort((a, b) => b.value - a.value).map((agent) => (
-                      <div key={agent.name} className="flex items-center gap-3">
-                        <span className="text-xs text-[#B8BED8] w-32 truncate shrink-0">{agent.name}</span>
-                        <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${(agent.value / 12.4) * 100}%` }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            viewport={{ once: true }}
-                            className="h-full rounded-full"
-                            style={{ backgroundColor: agent.color }}
-                          />
+                <AnimatedSection>
+                  <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Cost Breakdown by Agent (Today)</h3>
+                  <GlassCard>
+                    <div className="space-y-3">
+                      {costByAgent.filter(a => a.name !== "Others").sort((a, b) => b.value - a.value).map((agent) => (
+                        <div key={agent.name} className="flex items-center gap-3">
+                          <span className="text-xs text-[#B8BED8] w-32 truncate shrink-0">{agent.name}</span>
+                          <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${(agent.value / 12.4) * 100}%` }}
+                              transition={{ duration: 1, ease: "easeOut" }}
+                              viewport={{ once: true }}
+                              className="h-full rounded-full"
+                              style={{ backgroundColor: agent.color }}
+                            />
+                          </div>
+                          <span className="text-xs text-white font-medium w-14 text-right">${agent.value.toFixed(2)}</span>
                         </div>
-                        <span className="text-xs text-white font-medium w-14 text-right">${agent.value.toFixed(2)}</span>
+                      ))}
+                      <div className="flex items-center gap-3 pt-2 border-t border-white/[0.04]">
+                        <span className="text-xs text-[#6B7290] w-32 truncate shrink-0">Total Today</span>
+                        <div className="flex-1" />
+                        <span className="text-xs text-[#D4AF37] font-semibold w-14 text-right">${costByAgent.reduce((s, a) => s + a.value, 0).toFixed(2)}</span>
                       </div>
-                    ))}
-                    <div className="flex items-center gap-3 pt-2 border-t border-white/[0.04]">
-                      <span className="text-xs text-[#6B7290] w-32 truncate shrink-0">Total Today</span>
-                      <div className="flex-1" />
-                      <span className="text-xs text-[#D4AF37] font-semibold w-14 text-right">${costByAgent.reduce((s, a) => s + a.value, 0).toFixed(2)}</span>
                     </div>
-                  </div>
-                </GlassCard>
-              </AnimatedSection>
+                  </GlassCard>
+                </AnimatedSection>
+              </div>
             </div>
           </div>
         </section>
