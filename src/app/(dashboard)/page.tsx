@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { KPICard } from "@/components/dashboard/kpi-card";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function CommandCenterPage() {
+  const router = useRouter();
   const { agents, events, tasks, loading, error } = useRealtimeDashboard();
 
   const onlineCount = agents.filter((a) => a.status === "online").length;
@@ -147,21 +149,33 @@ export default function CommandCenterPage() {
         className="glass-elevated rounded-2xl p-4 flex flex-wrap items-center gap-4"
       >
         <span className="text-sm text-[#6B7290] font-medium">Quick Actions:</span>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-[#00D4FF] text-sm font-medium hover:bg-[#00D4FF]/20 transition-colors">
+        <button 
+          onClick={() => router.push("/agents")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-[#00D4FF] text-sm font-medium hover:bg-[#00D4FF]/20 transition-colors"
+        >
           <Bot className="w-4 h-4" />
           New Agent
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#B829DD]/10 border border-[#B829DD]/20 text-[#B829DD] text-sm font-medium hover:bg-[#B829DD]/20 transition-colors">
+        <button 
+          onClick={() => router.push("/swarm")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#B829DD]/10 border border-[#B829DD]/20 text-[#B829DD] text-sm font-medium hover:bg-[#B829DD]/20 transition-colors"
+        >
           <Zap className="w-4 h-4" />
           Run Workflow
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00E5A0]/10 border border-[#00E5A0]/20 text-[#00E5A0] text-sm font-medium hover:bg-[#00E5A0]/20 transition-colors">
+        <button 
+          onClick={() => router.push("/approvals")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00E5A0]/10 border border-[#00E5A0]/20 text-[#00E5A0] text-sm font-medium hover:bg-[#00E5A0]/20 transition-colors"
+        >
           <Shield className="w-4 h-4" />
           Request Approval
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FF6B35]/10 border border-[#FF6B35]/20 text-[#FF6B35] text-sm font-medium hover:bg-[#FF6B35]/20 transition-colors">
+        <button 
+          onClick={() => router.push("/operations")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FF6B35]/10 border border-[#FF6B35]/20 text-[#FF6B35] text-sm font-medium hover:bg-[#FF6B35]/20 transition-colors"
+        >
           <AlertTriangle className="w-4 h-4" />
-          View Alerts
+          View Tasks
         </button>
       </motion.div>
     </div>

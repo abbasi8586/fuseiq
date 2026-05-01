@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
   );
 
   // Auth pages - redirect logged-in users away
-  const authPaths = ["/login", "/signup", "/auth/callback", "/demo"];
+  const authPaths = ["/login", "/signup", "/auth/callback", "/demo", "/update-password"];
   const isAuthPage = authPaths.some(
     (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   );

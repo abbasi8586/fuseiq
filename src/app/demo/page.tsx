@@ -22,6 +22,9 @@ import {
   Clock,
   Users,
   Activity,
+  Loader2,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -143,18 +146,61 @@ const efficiencyData = [
 
 const COLORS = ["#00D4FF", "#B829DD", "#00E5A0", "#FF6B35", "#FFC857"];
 
+// Static fallback data when Supabase fails
+const fallbackAgents = [
+  { id: "1", name: "MarketingBot Pro", framework: "CrewAI", status: "online", type: "AI", role: "Marketing Specialist", department: "Marketing", efficiency: 94, executions: 128, costToday: 4.2, timezone: "America/New_York" },
+  { id: "2", name: "SupportAI", framework: "OpenAI", status: "online", type: "AI", role: "Support Agent", department: "Support", efficiency: 96, executions: 342, costToday: 8.5, timezone: "UTC" },
+  { id: "3", name: "CodeReview Bot", framework: "Kimi", status: "busy", type: "AI", role: "Code Reviewer", department: "Engineering", efficiency: 92, executions: 89, costToday: 2.1, timezone: "America/Los_Angeles" },
+  { id: "4", name: "SalesScout", framework: "Anthropic", status: "online", type: "AI", role: "Sales Researcher", department: "Sales", efficiency: 89, executions: 56, costToday: 3.8, timezone: "Europe/London" },
+  { id: "5", name: "DataSync Master", framework: "LangGraph", status: "offline", type: "AI", role: "Data Engineer", department: "Data", efficiency: 88, executions: 45, costToday: 1.2, timezone: "Asia/Tokyo" },
+  { id: "6", name: "Rook AI", framework: "Custom", status: "online", type: "AI", role: "CEO Operator", department: "Executive", efficiency: 99, executions: 523, costToday: 12.4, timezone: "America/New_York" },
+];
+
+const fallbackEvents = [
+  { id: "1", type: "agent.executed", actor: "MarketingBot Pro", target: "Campaign", message: "Email campaign executed: 10,000 sends", timestamp: new Date().toISOString(), severity: "success" },
+  { id: "2", type: "approval.requested", actor: "SalesScout", target: "Budget", message: "Budget increase requested: $500", timestamp: new Date(Date.now() - 300000).toISOString(), severity: "warning" },
+  { id: "3", type: "agent.completed", actor: "CodeReview Bot", target: "PR #234", message: "Code review completed for frontend refactor", timestamp: new Date(Date.now() - 600000).toISOString(), severity: "success" },
+  { id: "4", type: "task.created", actor: "Awais Abbasi", target: "Landing Page", message: "New task: Design v3.0 landing page", timestamp: new Date(Date.now() - 900000).toISOString(), severity: "info" },
+  { id: "5", type: "agent.failed", actor: "DataSync Master", target: "Pipeline", message: "Data pipeline sync failed: timeout", timestamp: new Date(Date.now() - 1200000).toISOString(), severity: "error" },
+];
+
+const fallbackTasks = [
+  { id: "1", title: "Design new landing page", status: "in_progress", priority: "high", progress: 60, tags: ["design", "web"] },
+  { id: "2", title: "Implement OAuth flow", status: "todo", priority: "urgent", progress: 0, tags: ["auth", "backend"] },
+  { id: "3", title: "Write API documentation", status: "review", priority: "medium", progress: 90, tags: ["docs"] },
+  { id: "4", title: "Optimize database queries", status: "done", priority: "high", progress: 100, tags: ["performance", "db"] },
+];
+
 export default function DemoPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [usingFallback, setUsingFallback] = useState(false);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     async function fetchData() {
       if (!supabase) {
+        setUsingFallback(true);
+        setAgents(fallbackAgents);
+        setEvents(fallbackEvents);
+        setTasks(fallbackTasks);
         setLoading(false);
         return;
       }
+
+      // Set a 5-second timeout
+      timeoutId = setTimeout(() => {
+        setUsingFallback(true);
+        setAgents(fallbackAgents);
+        setEvents(fallbackEvents);
+        setTasks(fallbackTasks);
+        setLoading(false);
+      }, 5000);
+
       try {
         const [agentsRes, eventsRes, tasksRes] = await Promise.all([
           supabase
@@ -176,17 +222,33 @@ export default function DemoPage() {
             .limit(20),
         ]);
 
+        clearTimeout(timeoutId);
+
+        if (agentsRes.error || eventsRes.error || tasksRes.error) {
+          throw new Error("Database error");
+        }
+
         setAgents((agentsRes.data || []).map(mapAgent));
         setEvents((eventsRes.data || []).map(mapEvent));
         setTasks((tasksRes.data || []).map(mapTask));
+        setUsingFallback(false);
       } catch (err) {
         console.error("Demo fetch error:", err);
+        setUsingFallback(true);
+        setAgents(fallbackAgents);
+        setEvents(fallbackEvents);
+        setTasks(fallbackTasks);
       } finally {
+        clearTimeout(timeoutId);
         setLoading(false);
       }
     }
 
     fetchData();
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   if (loading) {
@@ -202,10 +264,9 @@ export default function DemoPage() {
 
   const onlineCount = agents.filter((a) => a.status === "online").length;
   const totalExecutions = agents.reduce((sum, a) => sum + (a.executions || 0), 0);
-  const avgEfficiency =
-    agents.length > 0
-      ? Math.round(agents.reduce((sum, a) => sum + (a.efficiency || 0), 0) / agents.length)
-      : 0;
+  const avgEfficiency = agents.length > 0
+    ? Math.round(agents.reduce((sum, a) => sum + (a.efficiency || 0), 0) / agents.length)
+    : 0;
 
   return (
     <div className="flex flex-col h-screen bg-radial-glow overflow-hidden">
@@ -218,6 +279,12 @@ export default function DemoPage() {
               <span className="text-[#00D4FF] font-medium">Live Demo</span> —
               Real seed data from FuseIQ. No account required.
             </span>
+            {usingFallback && (
+              <span className="text-xs text-[#FFC857] flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Using offline demo data
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <Link

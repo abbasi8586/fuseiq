@@ -46,10 +46,10 @@ export default function LandingPage() {
             <span className="font-bold text-lg text-gradient">FuseIQ</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/staff" className="text-sm text-[#B8BED8] hover:text-white transition-colors">
+            <Link href="/login" className="text-sm text-[#B8BED8] hover:text-white transition-colors">
               Sign In
             </Link>
-            <Link href="/staff">
+            <Link href="/login">
               <Button className="neon-button border-0 text-sm">
                 Launch Dashboard
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -80,15 +80,17 @@ export default function LandingPage() {
               cyber-luxury glassmorphism dashboard built for 2030.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <Link href="/staff">
+              <Link href="/login">
                 <Button size="lg" className="neon-button border-0 text-lg px-8">
                   Enter Command Center
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 px-8">
-                View Documentation
-              </Button>
+              <Link href="/demo">
+                <Button size="lg" variant="outline" className="border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 px-8">
+                  View Demo
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
