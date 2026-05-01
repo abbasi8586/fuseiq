@@ -32,7 +32,6 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes - require auth
   const protectedPaths = [
-    "/",
     "/agents",
     "/operations",
     "/team",
