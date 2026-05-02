@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 const frameworks = [
-  { id: "deepseek", name: "DeepSeek (Free)", icon: "🔮", color: "#B829DD", pricePer1K: 0.000, isFree: true },
+  { id: "deepseek", name: "FuseIQ (Default)", icon: "⚡", color: "#B829DD", pricePer1K: 0.000, isFree: true },
   { id: "kimi", name: "Kimi K2.5", icon: "🌙", color: "#00D4FF", pricePer1K: 0.008, isFree: false },
   { id: "openai", name: "GPT-4o", icon: "🧠", color: "#10A37F", pricePer1K: 0.005, isFree: false },
   { id: "anthropic", name: "Claude 3.5", icon: "🤖", color: "#CC785C", pricePer1K: 0.003, isFree: false },
@@ -85,7 +85,7 @@ export default function SimulatorPage() {
         setResults((prev) => [result, ...prev]);
 
         if (isRateLimited) {
-          toast.error("DeepSeek Free Tier limit reached", {
+          toast.error("Platform default limit reached", {
             description: "Switch to a BYOK model (Kimi, OpenAI, Claude) or add your own key.",
             action: {
               label: "Settings",
@@ -166,7 +166,7 @@ export default function SimulatorPage() {
             <div>
               <p className="text-sm font-medium text-[#FF6B35]">API Keys Not Configured</p>
               <p className="text-xs text-[#6B7290] mt-1">
-                DeepSeek Free Tier is the default and works without setup. To use BYOK models (Kimi, OpenAI, Claude), add your API keys in{" "}
+                FuseIQ default is active and works without setup. To use additional models (Kimi, OpenAI, Claude), add your API keys in{" "}
                 <Link href="/settings" className="text-[#00D4FF] hover:underline">Settings → Integrations</Link>.
               </p>
             </div>

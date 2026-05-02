@@ -96,7 +96,7 @@ export function FloatingCopilot() {
     ]);
 
     if (result.isRateLimited) {
-      toast.error("DeepSeek Free Tier limit reached", {
+      toast.error("Platform default limit reached", {
         description: "Add your own API key in Settings for unlimited access.",
       });
     }
@@ -159,7 +159,7 @@ export function FloatingCopilot() {
                 </div>
                 <div>
                   <span className="text-sm font-semibold text-white block leading-tight">Co-Pilot</span>
-                  <span className="text-[10px] text-[#6B7290]">DeepSeek-powered</span>
+                  <span className="text-[10px] text-[#6B7290]">FuseIQ AI</span>
                 </div>
               </div>
               <div className="flex items-center gap-1">

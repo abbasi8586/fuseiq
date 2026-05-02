@@ -171,7 +171,7 @@ export function FloatingHelp() {
         ]);
 
         if (isRateLimited) {
-          toast.error("DeepSeek Free Tier limit reached", {
+          toast.error("Platform default limit reached", {
             description: "Add your own API key in Settings for unlimited access.",
           });
         }
@@ -238,7 +238,7 @@ export function FloatingHelp() {
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleOpen}
-            className="fixed bottom-6 left-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-r from-[#00D4FF] to-[#00E5A0] text-[#06070A] font-semibold shadow-lg shadow-[#00D4FF]/30 hover:shadow-xl hover:shadow-[#00D4FF]/50 transition-shadow flex items-center justify-center"
+            className="fixed bottom-6 right-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-r from-[#00D4FF] to-[#00E5A0] text-[#06070A] font-semibold shadow-lg shadow-[#00D4FF]/30 hover:shadow-xl hover:shadow-[#00D4FF]/50 transition-shadow flex items-center justify-center"
             aria-label="Help"
           >
             <HelpCircle className="w-5 h-5" />

@@ -90,7 +90,7 @@ export function CoPilotChat() {
         };
         setMessages((prev) => [...prev, assistantMessage]);
         if (isRateLimited) {
-          toast.error("DeepSeek Free Tier limit reached", {
+          toast.error("Platform default limit reached", {
             description: "Switch to BYOK for unlimited access.",
             action: {
               label: "Settings",
@@ -139,7 +139,7 @@ export function CoPilotChat() {
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium text-white truncate">Co-Pilot</p>
-          <p className="text-xs text-[#6B7290]">DeepSeek-powered</p>
+          <p className="text-xs text-[#6B7290]">FuseIQ AI</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#00E5A0]/10 border border-[#00E5A0]/20">
@@ -274,7 +274,7 @@ export function CoPilotChat() {
           </Button>
         </div>
         <p className="text-[10px] text-[#4A5068] mt-1.5 text-center">
-          Co-Pilot answers FuseIQ platform questions only. Powered by DeepSeek Free Tier.
+          Co-Pilot answers FuseIQ platform questions only. Powered by FuseIQ AI.
           <Link href="/settings" className="text-[#00D4FF] hover:underline ml-1">Add BYOK key →</Link>
         </p>
       </div>
