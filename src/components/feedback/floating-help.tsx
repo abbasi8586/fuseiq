@@ -13,6 +13,8 @@ import {
   Play,
   ChevronLeft,
   CheckCircle2,
+  AlertTriangle,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -38,10 +40,10 @@ export function FloatingHelp() {
   // Quick help
   const [helpInput, setHelpInput] = useState("");
   const [helpMessages, setHelpMessages] = useState<
-    { role: "user" | "assistant"; text: string }[]
+    { role: "user" | "assistant"; text: string; isError?: boolean; isRateLimited?: boolean }[]
   >([
     {
-      role: "assistant",
+      role: "assistant" as const,
       text:
         "Hi! I'm FuseIQ Help. Ask me anything about using the platform — agents, workflows, billing, or troubleshooting.",
     },
@@ -151,19 +153,32 @@ export function FloatingHelp() {
         body: JSON.stringify({ question: userMsg }),
       });
       const data = await res.json();
-      if (res.ok && data.answer) {
-        setHelpMessages((prev) => [
-          ...prev,
-          { role: "assistant", text: data.answer },
-        ]);
-      } else {
+
+      if (data.error || !data.answer) {
+        const isRateLimited =
+          data.rateLimited ||
+          data.error?.includes("rate limit") ||
+          data.error?.includes("quota");
+
         setHelpMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            text:
-              "I'm having trouble connecting right now. Try checking our documentation or contact support directly.",
+            text: data.error || "I'm having trouble connecting right now. Try again shortly.",
+            isError: true,
+            isRateLimited: isRateLimited,
           },
+        ]);
+
+        if (isRateLimited) {
+          toast.error("DeepSeek Free Tier limit reached", {
+            description: "Add your own API key in Settings for unlimited access.",
+          });
+        }
+      } else {
+        setHelpMessages((prev) => [
+          ...prev,
+          { role: "assistant", text: data.answer },
         ]);
       }
     } catch {
@@ -171,8 +186,8 @@ export function FloatingHelp() {
         ...prev,
         {
           role: "assistant",
-          text:
-            "I'm having trouble connecting right now. Try checking our documentation or contact support directly.",
+          text: "Connection error. Please try again or contact support directly.",
+          isError: true,
         },
       ]);
     }
@@ -223,7 +238,7 @@ export function FloatingHelp() {
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleOpen}
-            className="fixed bottom-14 right-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-r from-[#00D4FF] to-[#00E5A0] text-[#06070A] font-semibold shadow-lg shadow-[#00D4FF]/30 hover:shadow-xl hover:shadow-[#00D4FF]/50 transition-shadow flex items-center justify-center"
+            className="fixed bottom-6 left-6 z-[60] w-12 h-12 rounded-full bg-gradient-to-r from-[#00D4FF] to-[#00E5A0] text-[#06070A] font-semibold shadow-lg shadow-[#00D4FF]/30 hover:shadow-xl hover:shadow-[#00D4FF]/50 transition-shadow flex items-center justify-center"
             aria-label="Help"
           >
             <HelpCircle className="w-5 h-5" />
@@ -251,7 +266,7 @@ export function FloatingHelp() {
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full sm:w-[420px] max-h-[85vh] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl"
+              className="relative w-full sm:w-[420px] max-w-[100vw] max-h-[85vh] glass-card border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06] shrink-0">
@@ -281,12 +296,24 @@ export function FloatingHelp() {
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={handleClose}
-                  className="p-1.5 rounded hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  {view === "quick-help" && (
+                    <Link
+                      href="/settings"
+                      onClick={handleClose}
+                      className="p-1.5 rounded hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
+                      title="API Key Settings"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleClose}
+                    className="p-1.5 rounded hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Content */}
@@ -306,22 +333,15 @@ export function FloatingHelp() {
                           >
                             <div
                               className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                              style={{
-                                background: `${item.color}15`,
-                              }}
+                              style={{ background: `${item.color}15` }}
                             >
-                              <Icon
-                                className="w-5 h-5"
-                                style={{ color: item.color }}
-                              />
+                              <Icon className="w-5 h-5" style={{ color: item.color }} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium text-white group-hover:text-[#B8BED8] transition-colors">
                                 {item.label}
                               </div>
-                              <div className="text-xs text-[#6B7290]">
-                                {item.desc}
-                              </div>
+                              <div className="text-xs text-[#6B7290]">{item.desc}</div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-[#4A5068] rotate-180 shrink-0" />
                           </Link>
@@ -335,22 +355,15 @@ export function FloatingHelp() {
                         >
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                            style={{
-                              background: `${item.color}15`,
-                            }}
+                            style={{ background: `${item.color}15` }}
                           >
-                            <Icon
-                              className="w-5 h-5"
-                              style={{ color: item.color }}
-                            />
+                            <Icon className="w-5 h-5" style={{ color: item.color }} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-white group-hover:text-[#B8BED8] transition-colors">
                               {item.label}
                             </div>
-                            <div className="text-xs text-[#6B7290]">
-                              {item.desc}
-                            </div>
+                            <div className="text-xs text-[#6B7290]">{item.desc}</div>
                           </div>
                           <ChevronLeft className="w-4 h-4 text-[#4A5068] rotate-180 shrink-0" />
                         </button>
@@ -478,7 +491,7 @@ export function FloatingHelp() {
                           <label className="text-xs font-medium text-[#B8BED8] block mb-1.5">
                             Feedback Type
                           </label>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             {["suggestion", "bug", "praise"].map((type) => (
                               <button
                                 key={type}
@@ -547,18 +560,42 @@ export function FloatingHelp() {
                           }`}
                         >
                           {msg.role === "assistant" && (
-                            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#00D4FF] to-[#00E5A0] flex items-center justify-center shrink-0 mt-0.5">
-                              <Zap className="w-3 h-3 text-[#06070A]" />
+                            <div
+                              className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5 ${
+                                msg.isError
+                                  ? "bg-[#FF6B35]/20"
+                                  : "bg-gradient-to-br from-[#00D4FF] to-[#00E5A0]"
+                              }`}
+                            >
+                              {msg.isRateLimited ? (
+                                <AlertTriangle className="w-3 h-3 text-[#FF6B35]" />
+                              ) : (
+                                <Zap className="w-3 h-3 text-[#06070A]" />
+                              )}
                             </div>
                           )}
                           <div
                             className={`px-3 py-2 rounded-xl text-xs max-w-[85%] leading-relaxed ${
                               msg.role === "user"
                                 ? "bg-[#00D4FF]/15 text-[#00D4FF] border border-[#00D4FF]/20"
+                                : msg.isError
+                                ? "bg-[#FF6B35]/5 text-[#B8BED8] border border-[#FF6B35]/20"
                                 : "bg-white/[0.03] text-[#B8BED8] border border-white/[0.06]"
                             }`}
                           >
                             {msg.text}
+                            {msg.isRateLimited && (
+                              <div className="mt-2 pt-2 border-t border-white/[0.06]">
+                                <Link
+                                  href="/settings"
+                                  onClick={handleClose}
+                                  className="text-[10px] text-[#00D4FF] hover:text-[#00E5A0] transition-colors inline-flex items-center gap-1"
+                                >
+                                  <Settings className="w-3 h-3" />
+                                  Add BYOK key →
+                                </Link>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -579,7 +616,7 @@ export function FloatingHelp() {
                         value={helpInput}
                         onChange={(e) => setHelpInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && !loading && handleHelpSend()}
-                        placeholder="Ask anything about FuseIQ..."
+                        placeholder="Ask about FuseIQ..."
                         className="flex-1 bg-transparent text-white text-sm placeholder:text-[#4A5068] outline-none"
                       />
                       <button

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { callDeepSeek, buildGuardedMessages } from "@/lib/deepseek";
 
 const PROVIDER_ENDPOINTS: Record<string, { url: string; keyEnv: string; modelMap: Record<string, string> }> = {
   kimi: {
@@ -27,8 +28,48 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { model, prompt } = body;
+  const { model, prompt, useDeepSeek } = body;
 
+  // ─── DeepSeek Free Tier (default when useDeepSeek=true or no BYOK key) ──
+  if (useDeepSeek || !PROVIDER_ENDPOINTS[model]) {
+    const messages = buildGuardedMessages(
+      prompt,
+      `You are the FuseIQ Agent Simulator. The user is testing an agent with this prompt. Provide a realistic, helpful response as if you were the AI agent being tested. Stay in character. Keep it concise but useful.`
+    );
+
+    const result = await callDeepSeek({
+      messages,
+      temperature: 0.7,
+      maxTokens: 1024,
+    });
+
+    if (!result.success) {
+      // Return error in a shape the frontend expects
+      return NextResponse.json({
+        choices: [{ message: { content: result.error || "Simulation failed" } }],
+        usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+        error: result.error,
+        rateLimited: result.isRateLimited,
+        suggestion: result.isRateLimited
+          ? "Switch to BYOK in Settings → Integrations, or try a BYOK model (Kimi, OpenAI, Claude) above."
+          : "Check your API key configuration.",
+      }, { status: 200 });
+    }
+
+    const promptTokens = Math.floor(prompt.length / 4);
+    const completionTokens = Math.floor(result.content.length / 4);
+
+    return NextResponse.json({
+      choices: [{ message: { content: result.content } }],
+      usage: {
+        prompt_tokens: promptTokens,
+        completion_tokens: completionTokens,
+        total_tokens: promptTokens + completionTokens,
+      },
+    });
+  }
+
+  // ─── BYOK Provider Path ─────────────────────────────────────────
   const provider = PROVIDER_ENDPOINTS[model];
   if (!provider) {
     return NextResponse.json({ error: "Unsupported model" }, { status: 400 });

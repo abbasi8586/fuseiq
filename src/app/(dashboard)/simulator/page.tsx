@@ -24,9 +24,10 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 const frameworks = [
-  { id: "kimi", name: "Kimi K2.5", icon: "🌙", color: "#00D4FF", pricePer1K: 0.008 },
-  { id: "openai", name: "GPT-4o", icon: "🧠", color: "#10A37F", pricePer1K: 0.005 },
-  { id: "anthropic", name: "Claude 3.5", icon: "🤖", color: "#CC785C", pricePer1K: 0.003 },
+  { id: "deepseek", name: "DeepSeek (Free)", icon: "🔮", color: "#B829DD", pricePer1K: 0.000, isFree: true },
+  { id: "kimi", name: "Kimi K2.5", icon: "🌙", color: "#00D4FF", pricePer1K: 0.008, isFree: false },
+  { id: "openai", name: "GPT-4o", icon: "🧠", color: "#10A37F", pricePer1K: 0.005, isFree: false },
+  { id: "anthropic", name: "Claude 3.5", icon: "🤖", color: "#CC785C", pricePer1K: 0.003, isFree: false },
 ];
 
 interface SimulationResult {
@@ -57,29 +58,24 @@ export default function SimulatorPage() {
     const fw = frameworks.find((f) => f.id === selectedFramework)!;
 
     try {
-      // Call the chat completions API through our proxy endpoint
       const res = await fetch("/api/simulator/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: selectedFramework,
           prompt: prompt,
+          useDeepSeek: selectedFramework === "deepseek",
         }),
       });
 
       const latency = Date.now() - startTime;
+      const data = await res.json();
 
-      if (!res.ok) {
-        // Fallback to simulated response if API not configured
-        const errorData = await res.json().catch(() => ({ error: "API not configured" }));
-        if (errorData.error?.includes("not configured") || errorData.error?.includes("No API key")) {
-          setApiConfigured(false);
-        }
-
-        const tokens = Math.floor(prompt.length / 4) + Math.floor(Math.random() * 300) + 50;
+      if (!res.ok || data.error) {
+        const isRateLimited = data.rateLimited || data.error?.includes("rate limit") || data.error?.includes("quota");
         const result: SimulationResult = {
           status: "error",
-          output: `API Error: ${errorData.error || "Failed to connect to LLM provider"}. \n\nTip: Configure your API keys in Settings → Integrations.`,
+          output: data.error || `API Error: ${res.statusText}`,
           latency,
           tokens: { prompt: Math.floor(prompt.length / 4), completion: 0, total: Math.floor(prompt.length / 4) },
           cost: 0,
@@ -87,17 +83,27 @@ export default function SimulatorPage() {
           framework: fw.name,
         };
         setResults((prev) => [result, ...prev]);
-        toast.error("Simulation failed — check API configuration");
+
+        if (isRateLimited) {
+          toast.error("DeepSeek Free Tier limit reached", {
+            description: "Switch to a BYOK model (Kimi, OpenAI, Claude) or add your own key.",
+            action: {
+              label: "Settings",
+              onClick: () => window.location.href = "/settings",
+            },
+          });
+        } else {
+          toast.error("Simulation failed — check API configuration");
+        }
         setRunning(false);
         return;
       }
 
-      const data = await res.json();
       const completionText = data.choices?.[0]?.message?.content || data.output || "No response";
       const promptTokens = data.usage?.prompt_tokens || Math.floor(prompt.length / 4);
       const completionTokens = data.usage?.completion_tokens || Math.floor(completionText.length / 4);
       const totalTokens = data.usage?.total_tokens || promptTokens + completionTokens;
-      const cost = (totalTokens / 1000) * fw.pricePer1K;
+      const cost = fw.isFree ? 0 : (totalTokens / 1000) * fw.pricePer1K;
 
       const result: SimulationResult = {
         status: "success",
@@ -110,7 +116,7 @@ export default function SimulatorPage() {
       };
 
       setResults((prev) => [result, ...prev]);
-      toast.success(`Simulation complete — ${totalTokens} tokens, ${latency}ms`);
+      toast.success(`Simulation complete — ${totalTokens.toLocaleString()} tokens, ${latency}ms`);
     } catch (err: any) {
       const latency = Date.now() - startTime;
       const result: SimulationResult = {
@@ -124,7 +130,6 @@ export default function SimulatorPage() {
       };
       setResults((prev) => [result, ...prev]);
       toast.error("Network error — check API configuration");
-      setApiConfigured(false);
     } finally {
       setRunning(false);
     }
@@ -155,15 +160,14 @@ export default function SimulatorPage() {
       </div>
 
       {!apiConfigured && (
-        <GlassCard className="border-[#D4AF37]/20 bg-[#D4AF37]/5">
+        <GlassCard className="border-[#FF6B35]/20 bg-[#FF6B35]/5">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-[#FF6B35] shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-[#D4AF37]">API Keys Not Configured</p>
+              <p className="text-sm font-medium text-[#FF6B35]">API Keys Not Configured</p>
               <p className="text-xs text-[#6B7290] mt-1">
-                To run live simulations, add your LLM API keys in{" "}
+                DeepSeek Free Tier is the default and works without setup. To use BYOK models (Kimi, OpenAI, Claude), add your API keys in{" "}
                 <Link href="/settings" className="text-[#00D4FF] hover:underline">Settings → Integrations</Link>.
-                For now, simulations will show estimated responses.
               </p>
             </div>
           </div>
@@ -178,19 +182,22 @@ export default function SimulatorPage() {
               <Settings className="w-4 h-4 text-[#6B7290]" />
               <span className="text-sm text-[#6B7290]">Configuration</span>
             </div>
-            <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               {frameworks.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setSelectedFramework(f.id)}
-                  className={`p-3 rounded-lg border text-sm transition-all ${
+                  className={`p-3 rounded-lg border text-xs sm:text-sm transition-all text-left ${
                     selectedFramework === f.id
                       ? "border-[#00D4FF]/40 bg-[#00D4FF]/10 text-[#00D4FF]"
                       : "border-white/[0.06] bg-white/[0.02] text-[#6B7290] hover:border-white/[0.12]"
                   }`}
                 >
-                  <span className="text-lg mr-2">{f.icon}</span>
-                  {f.name}
+                  <span className="text-lg mr-1">{f.icon}</span>
+                  <span className="font-medium">{f.name}</span>
+                  {f.isFree && (
+                    <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-[#00E5A0]/20 text-[#00E5A0] font-bold">FREE</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -323,7 +330,7 @@ export default function SimulatorPage() {
               </div>
               <div className="flex justify-between">
                 <span>Price / 1K tokens</span>
-                <span className="text-white">${fw?.pricePer1K.toFixed(3)}</span>
+                <span className="text-white">{fw?.isFree ? "$0.000 (Free)" : `$${fw?.pricePer1K.toFixed(3)}`}</span>
               </div>
               <div className="flex justify-between">
                 <span>Avg Latency</span>
@@ -336,7 +343,7 @@ export default function SimulatorPage() {
               <div className="h-px bg-white/[0.06] my-2" />
               <div className="flex justify-between">
                 <span className="text-[#B8BED8]">Est. cost for 1K prompt</span>
-                <span className="text-[#00E5A0] font-mono">${fw?.pricePer1K.toFixed(3)}</span>
+                <span className="text-[#00E5A0] font-mono">{fw?.isFree ? "$0.000" : `$${fw?.pricePer1K.toFixed(3)}`}</span>
               </div>
             </div>
           </GlassCard>

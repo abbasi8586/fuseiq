@@ -180,50 +180,39 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
         </motion.div>
       </div>
 
-      {/* ── Premium Type Filter Segmented Control ────────────────────── */}
-      <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-[#0B0D14] border border-white/[0.06] w-fit shadow-[0_0_20px_rgba(0,212,255,0.04)]">
+      {/* ── Type Filter: 3 Equal-Width Pills via Grid ─────────────── */}
+      <div className="grid grid-cols-3 gap-2 p-2 rounded-2xl bg-[#0B0D14] border border-white/[0.06] w-full shadow-[0_0_20px_rgba(0,212,255,0.04)]">
         {typePills.map((pill) => {
           const isSelected = typeFilter === pill.key;
           const Icon = pill.icon;
-          const glowColors: Record<TypeFilter, string> = {
-            AI: "shadow-[0_0_16px_rgba(0,212,255,0.25)] border-[#00D4FF]/40",
-            Human: "shadow-[0_0_16px_rgba(0,229,160,0.25)] border-[#00E5A0]/40",
-            Hybrid: "shadow-[0_0_16px_rgba(184,41,221,0.25)] border-[#B829DD]/40",
+          const theme: Record<TypeFilter, { glow: string; text: string; bg: string }> = {
+            AI:    { glow: "shadow-[0_0_16px_rgba(0,212,255,0.25)] border-[#00D4FF]/40", text: "text-[#00D4FF]", bg: "bg-[#00D4FF]/10" },
+            Human: { glow: "shadow-[0_0_16px_rgba(0,229,160,0.25)] border-[#00E5A0]/40", text: "text-[#00E5A0]", bg: "bg-[#00E5A0]/10" },
+            Hybrid:{ glow: "shadow-[0_0_16px_rgba(184,41,221,0.25)] border-[#B829DD]/40", text: "text-[#B829DD]", bg: "bg-[#B829DD]/10" },
           };
-          const textColors: Record<TypeFilter, string> = {
-            AI: "text-[#00D4FF]",
-            Human: "text-[#00E5A0]",
-            Hybrid: "text-[#B829DD]",
-          };
-          const bgColors: Record<TypeFilter, string> = {
-            AI: "bg-[#00D4FF]/10",
-            Human: "bg-[#00E5A0]/10",
-            Hybrid: "bg-[#B829DD]/10",
-          };
+          const t = theme[pill.key];
           return (
             <motion.button
               key={pill.key}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setTypeFilter(pill.key)}
-              className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 border ${
+              className={`relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 border ${
                 isSelected
-                  ? `${bgColors[pill.key]} ${textColors[pill.key]} ${glowColors[pill.key]} backdrop-blur-sm`
+                  ? `${t.bg} ${t.text} ${t.glow} backdrop-blur-sm`
                   : "bg-transparent text-[#6B7290] border-transparent hover:text-[#B8BED8] hover:bg-white/[0.03]"
               }`}
             >
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                isSelected ? bgColors[pill.key] : "bg-white/[0.04]"
+                isSelected ? t.bg : "bg-white/[0.04]"
               }`}>
                 <Icon className={`w-3.5 h-3.5 transition-colors duration-300 ${
-                  isSelected ? textColors[pill.key] : "text-[#6B7290]"
+                  isSelected ? t.text : "text-[#6B7290]"
                 }`} />
               </div>
               <span>{pill.label}</span>
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition-all duration-300 ${
-                isSelected
-                  ? "bg-white/[0.15] text-white"
-                  : "bg-white/[0.04] text-[#4A5068]"
+                isSelected ? "bg-white/[0.15] text-white" : "bg-white/[0.04] text-[#4A5068]"
               }`}>
                 {pill.count}
               </span>
@@ -321,17 +310,17 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
         )}
       </AnimatePresence>
 
-      {/* Staff Grid/List */}
+      {/* Staff Grid/List — Full-Width Equal Grid */}
       {filteredStaff.length > 0 && (
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className={viewMode === "grid"
-            ? "grid gap-5 w-full"
-            : "space-y-3"
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-full"
+              : "space-y-3"
           }
-          style={viewMode === "grid" ? { gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" } : undefined}
         >
           {filteredStaff.map((member, i) => (
             <motion.div
@@ -339,11 +328,12 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
               variants={itemVariants}
               custom={i}
               layout
+              className="h-full"
             >
               <GlassCard
                 hover
                 glow={member.isCEO ? "purple" : member.status === "online" ? "cyan" : member.status === "busy" ? "ember" : "none"}
-                className={`h-full group ${member.isCEO ? 'border-[#00D4FF]/30 shadow-[0_0_30px_rgba(0,212,255,0.1)]' : ''}`}
+                className={`h-full flex flex-col group ${member.isCEO ? 'border-[#00D4FF]/30 shadow-[0_0_30px_rgba(0,212,255,0.1)]' : ''}`}
               >
                 {member.isCEO ? (
                   <div className="flex items-start justify-between mb-4">

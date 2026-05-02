@@ -12,14 +12,19 @@ import {
   Loader2,
   Copy,
   Check,
+  AlertTriangle,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isError?: boolean;
+  isRateLimited?: boolean;
 }
 
 export function CoPilotChat() {
@@ -59,43 +64,64 @@ export function CoPilotChat() {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response - replace with actual AI integration
-    setTimeout(() => {
-      const responses: Record<string, string> = {
-        deploy:
-          "I'll help you deploy a new agent. Navigate to **Agent Forge** and click 'New Agent'. You can choose from:\n\n• **Kimi** — Best for coding tasks\n• **GPT-4** — General purpose reasoning\n• **Claude** — Analysis and documentation\n• **CrewAI** — Multi-agent orchestration",
-        workflow:
-          "To run a workflow, go to **Swarm Canvas** and select a saved workflow. Currently available workflows:\n\n• **Code Review Pipeline** — Auto-review PRs\n• **Content Generation** — Blog + social posts\n• **Data Analysis** — Process CSVs and generate insights",
-        analytics:
-          "Your current metrics:\n\n• **Active Agents:** 3 online\n• **Executions Today:** 247\n• **Success Rate:** 94.2%\n• **Cost Today:** $12.47\n\nView full analytics at **/analytics**",
-        cost:
-          "Today's cost breakdown:\n\n• **OpenAI GPT-4:** $7.23 (58%)\n• **Kimi:** $3.12 (25%)\n• **Anthropic Claude:** $2.12 (17%)\n\nYou're **$37.53 under budget** today.",
-        help:
-          "I can help you with:\n\n1. **Agent Management** — Deploy, configure, monitor\n2. **Workflow Execution** — Run multi-agent pipelines\n3. **Performance Analysis** — Metrics, costs, efficiency\n4. **Team Operations** — Tasks, approvals, communications\n\nTry asking: 'Deploy an agent', 'Run workflow', or 'Show costs'",
-      };
+    try {
+      const res = await fetch("/api/copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            ...messages.map((m) => ({ role: m.role, content: m.content })),
+            { role: "user", content: userMessage.content },
+          ],
+        }),
+      });
 
-      const lowerInput = input.toLowerCase();
-      let responseContent =
-        responses[Object.keys(responses).find((k) => lowerInput.includes(k)) || ""];
+      const data = await res.json();
 
-      if (!responseContent) {
-        responseContent =
-          "I understand you're asking about **" +
-          input +
-          "**. I can help with that. Here are some options:\n\n• Use the **Command Palette** (⌘K) for quick actions\n• Check the **documentation** for detailed guides\n• Or rephrase your question with keywords like 'deploy', 'workflow', 'analytics', or 'cost'";
+      if (data.error) {
+        const isRateLimited = data.rateLimited || data.error?.includes("rate limit") || data.error?.includes("quota");
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: data.error,
+          timestamp: new Date(),
+          isError: true,
+          isRateLimited: isRateLimited,
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        if (isRateLimited) {
+          toast.error("DeepSeek Free Tier limit reached", {
+            description: "Switch to BYOK for unlimited access.",
+            action: {
+              label: "Settings",
+              onClick: () => window.location.href = "/settings",
+            },
+          });
+        }
+      } else if (data.message?.content) {
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: data.message.content,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      } else {
+        throw new Error("Empty response");
       }
-
+    } catch (err: any) {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: responseContent,
+        content: "I'm having trouble connecting right now. Please try again in a moment, or check your API key in Settings → Integrations.",
         timestamp: new Date(),
+        isError: true,
       };
-
       setMessages((prev) => [...prev, assistantMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
-  }, [input, isLoading]);
+    }
+  }, [input, isLoading, messages]);
 
   const handleCopy = (id: string, content: string) => {
     navigator.clipboard.writeText(content);
@@ -105,19 +131,28 @@ export function CoPilotChat() {
   };
 
   return (
-    <GlassCard className="flex flex-col h-[600px] max-h-[80vh]">
+    <GlassCard className="flex flex-col h-[calc(100vh-220px)] min-h-[400px] max-h-[800px]">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06] shrink-0">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-white">Co-Pilot</p>
-          <p className="text-xs text-[#6B7290]">AI Assistant</p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-white truncate">Co-Pilot</p>
+          <p className="text-xs text-[#6B7290]">DeepSeek-powered</p>
         </div>
-        <div className="ml-auto flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#00E5A0]/10 border border-[#00E5A0]/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#00E5A0] animate-pulse" />
-          <span className="text-[10px] text-[#00E5A0] font-medium">Online</span>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#00E5A0]/10 border border-[#00E5A0]/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#00E5A0] animate-pulse" />
+            <span className="text-[10px] text-[#00E5A0] font-medium hidden sm:inline">Online</span>
+          </div>
+          <Link
+            href="/settings"
+            className="p-1.5 rounded-lg hover:bg-white/5 text-[#6B7290] hover:text-white transition-colors"
+            title="API Key Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </Link>
         </div>
       </div>
 
@@ -128,31 +163,49 @@ export function CoPilotChat() {
             key={msg.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`flex gap-3 ${
-              msg.role === "user" ? "flex-row-reverse" : ""
-            }`}
+            className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
           >
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
                 msg.role === "user"
                   ? "bg-[#B829DD]/20 text-[#B829DD]"
+                  : msg.isError
+                  ? "bg-[#FF6B35]/20 text-[#FF6B35]"
                   : "bg-[#00D4FF]/20 text-[#00D4FF]"
               }`}
             >
               {msg.role === "user" ? (
                 <User className="w-3.5 h-3.5" />
+              ) : msg.isRateLimited ? (
+                <AlertTriangle className="w-3.5 h-3.5" />
               ) : (
                 <Bot className="w-3.5 h-3.5" />
               )}
             </div>
             <div
-              className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+              className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                 msg.role === "user"
                   ? "bg-[#B829DD]/10 text-white rounded-br-md"
+                  : msg.isError
+                  ? "bg-[#FF6B35]/5 text-[#B8BED8] border border-[#FF6B35]/20 rounded-bl-md"
                   : "bg-white/[0.03] text-[#B8BED8] rounded-bl-md"
               }`}
             >
               <div className="whitespace-pre-wrap">{msg.content}</div>
+
+              {/* Rate limit CTA */}
+              {msg.isRateLimited && (
+                <div className="mt-2 pt-2 border-t border-white/[0.06]">
+                  <Link
+                    href="/settings"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#00D4FF] hover:text-[#00E5A0] transition-colors"
+                  >
+                    <Settings className="w-3 h-3" />
+                    Add BYOK key in Settings → Integrations
+                  </Link>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-1.5">
                 <span className="text-[10px] text-[#4A5068]">
                   {msg.timestamp.toLocaleTimeString([], {
@@ -160,7 +213,7 @@ export function CoPilotChat() {
                     minute: "2-digit",
                   })}
                 </span>
-                {msg.role === "assistant" && (
+                {msg.role === "assistant" && !msg.isError && (
                   <button
                     onClick={() => handleCopy(msg.id, msg.content)}
                     className="text-[#4A5068] hover:text-[#B8BED8] transition-colors"
@@ -194,7 +247,7 @@ export function CoPilotChat() {
       </div>
 
       {/* Input */}
-      <div className="px-4 py-3 border-t border-white/[0.06]">
+      <div className="px-4 py-3 border-t border-white/[0.06] shrink-0">
         <div className="flex items-center gap-2">
           <input
             value={input}
@@ -205,13 +258,13 @@ export function CoPilotChat() {
                 handleSend();
               }
             }}
-            placeholder="Ask Co-Pilot anything..."
+            placeholder="Ask Co-Pilot anything about FuseIQ..."
             className="flex-1 bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-[#4A5068] outline-none focus:border-[#00D4FF]/30 transition-colors"
           />
           <Button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="h-10 w-10 p-0 rounded-xl bg-[#00D4FF]/20 hover:bg-[#00D4FF]/30 text-[#00D4FF] border border-[#00D4FF]/20 disabled:opacity-30"
+            className="h-10 w-10 p-0 rounded-xl bg-[#00D4FF]/20 hover:bg-[#00D4FF]/30 text-[#00D4FF] border border-[#00D4FF]/20 disabled:opacity-30 shrink-0"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -221,7 +274,8 @@ export function CoPilotChat() {
           </Button>
         </div>
         <p className="text-[10px] text-[#4A5068] mt-1.5 text-center">
-          Co-Pilot can make mistakes. Verify important actions.
+          Co-Pilot answers FuseIQ platform questions only. Powered by DeepSeek Free Tier.
+          <Link href="/settings" className="text-[#00D4FF] hover:underline ml-1">Add BYOK key →</Link>
         </p>
       </div>
     </GlassCard>
