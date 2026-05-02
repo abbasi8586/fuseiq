@@ -180,30 +180,60 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
         </motion.div>
       </div>
 
-      {/* Type Filter Pills — GOLD THEME */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* ── Premium Type Filter Segmented Control ────────────────────── */}
+      <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-[#0B0D14] border border-white/[0.06] w-fit shadow-[0_0_20px_rgba(0,212,255,0.04)]">
         {typePills.map((pill) => {
           const isSelected = typeFilter === pill.key;
           const Icon = pill.icon;
+          const glowColors: Record<TypeFilter, string> = {
+            AI: "shadow-[0_0_16px_rgba(0,212,255,0.25)] border-[#00D4FF]/40",
+            Human: "shadow-[0_0_16px_rgba(0,229,160,0.25)] border-[#00E5A0]/40",
+            Hybrid: "shadow-[0_0_16px_rgba(184,41,221,0.25)] border-[#B829DD]/40",
+          };
+          const textColors: Record<TypeFilter, string> = {
+            AI: "text-[#00D4FF]",
+            Human: "text-[#00E5A0]",
+            Hybrid: "text-[#B829DD]",
+          };
+          const bgColors: Record<TypeFilter, string> = {
+            AI: "bg-[#00D4FF]/10",
+            Human: "bg-[#00E5A0]/10",
+            Hybrid: "bg-[#B829DD]/10",
+          };
           return (
             <motion.button
               key={pill.key}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setTypeFilter(pill.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
+              className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 border ${
                 isSelected
-                  ? "bg-[#D4AF37] text-[#06070A] border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20"
-                  : "bg-transparent text-white border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.03]"
+                  ? `${bgColors[pill.key]} ${textColors[pill.key]} ${glowColors[pill.key]} backdrop-blur-sm`
+                  : "bg-transparent text-[#6B7290] border-transparent hover:text-[#B8BED8] hover:bg-white/[0.03]"
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                isSelected ? bgColors[pill.key] : "bg-white/[0.04]"
+              }`}>
+                <Icon className={`w-3.5 h-3.5 transition-colors duration-300 ${
+                  isSelected ? textColors[pill.key] : "text-[#6B7290]"
+                }`} />
+              </div>
               <span>{pill.label}</span>
-              <span className={`text-xs px-1.5 py-0.5 rounded-md font-bold ${
-                isSelected ? "bg-[#06070A]/20 text-[#06070A]" : "bg-white/[0.06] text-[#6B7290]"
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition-all duration-300 ${
+                isSelected
+                  ? "bg-white/[0.15] text-white"
+                  : "bg-white/[0.04] text-[#4A5068]"
               }`}>
                 {pill.count}
               </span>
+              {isSelected && (
+                <motion.div
+                  layoutId="staff-active-pill"
+                  className="absolute inset-0 rounded-xl border border-inherit pointer-events-none"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
             </motion.button>
           );
         })}
@@ -298,7 +328,7 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
           initial="hidden"
           animate="show"
           className={viewMode === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+            ? "grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5"
             : "space-y-3"
           }
         >

@@ -508,10 +508,11 @@ export default function DemoPage() {
 
             {/* Tasks + Chart Row — equal height columns */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-              <AnimatedSection className="h-full">
+              {/* Left column — Active Tasks */}
+              <AnimatedSection className="flex flex-col h-full">
                 <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Active Tasks</h3>
-                <GlassCard className="h-full">
-                  <div className="space-y-3">
+                <GlassCard className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                  <div className="space-y-3 flex-1 overflow-auto">
                     {demoTasks.map((task) => (
                       <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                         <div className={`w-2 h-2 rounded-full ${
@@ -543,35 +544,37 @@ export default function DemoPage() {
                 </GlassCard>
               </AnimatedSection>
 
-              {/* Right column: Executions + Cost Breakdown stacked, fills equal height */}
+              {/* Right column — Executions + Cost Breakdown stacked, fills equal height */}
               <div className="flex flex-col gap-6 h-full">
                 <AnimatedSection className="flex-1 min-h-0 flex flex-col">
                   <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Executions Over Time</h3>
-                  <GlassCard className="flex-1 min-h-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={executionData}>
-                        <defs>
-                          <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00D4FF" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#00D4FF" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="day" stroke="#4A5068" fontSize={12} />
-                        <YAxis stroke="#4A5068" fontSize={12} />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: "#0B0D14", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", color: "#fff" }}
-                        />
-                        <Area type="monotone" dataKey="executions" stroke="#00D4FF" fill="url(#execGradient)" strokeWidth={2} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                  <GlassCard className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                    <div className="flex-1 min-h-0">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={executionData}>
+                          <defs>
+                            <linearGradient id="execGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#00D4FF" stopOpacity={0.3} />
+                              <stop offset="95%" stopColor="#00D4FF" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                          <XAxis dataKey="day" stroke="#4A5068" fontSize={12} />
+                          <YAxis stroke="#4A5068" fontSize={12} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: "#0B0D14", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", color: "#fff" }}
+                          />
+                          <Area type="monotone" dataKey="executions" stroke="#00D4FF" fill="url(#execGradient)" strokeWidth={2} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   </GlassCard>
                 </AnimatedSection>
 
                 <AnimatedSection className="flex-1 min-h-0 flex flex-col">
                   <h3 className="text-sm font-semibold text-[#6B7290] uppercase tracking-wider mb-4">Cost Breakdown by Agent (Today)</h3>
-                  <GlassCard className="flex-1 min-h-0">
-                    <div className="space-y-3">
+                  <GlassCard className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                    <div className="space-y-3 flex-1 flex flex-col justify-center">
                       {costByAgent.filter(a => a.name !== "Others").sort((a, b) => b.value - a.value).map((agent) => (
                         <div key={agent.name} className="flex items-center gap-3">
                           <span className="text-xs text-[#B8BED8] w-32 truncate shrink-0">{agent.name}</span>

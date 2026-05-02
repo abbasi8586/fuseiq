@@ -736,7 +736,31 @@
   background: rgba(0, 212, 255, 0.4);
 }
 
-/* --- Selection Styling --- */
+/* --- Edge Data Flow Animation for Swarm Canvas --- */
+@keyframes dataFlow {
+  0% { stroke-dashoffset: 200; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes gradientRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes holoSweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.react-flow__edge-path {
+  transition: stroke-width 0.2s ease;
+}
 ::selection {
   background: rgba(0, 212, 255, 0.4);
   color: #fff;

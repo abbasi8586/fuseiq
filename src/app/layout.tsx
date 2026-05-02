@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 import { CommandPalette } from "@/components/copilot/command-palette";
-import { FloatingCopilot } from "@/components/copilot/floating-copilot";
+import { FloatingHelp } from "@/components/feedback/floating-help";
 
 export default function RootLayout({
   children,
@@ -59,7 +59,7 @@ export default function RootLayout({
         <TooltipProvider>
           {children}
           <CommandPalette />
-          <FloatingCopilot />
+          <FloatingHelp />
           <Toaster 
             position="top-right"
             toastOptions={{

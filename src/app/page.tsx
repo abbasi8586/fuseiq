@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Zap, Shield, BarChart3, GitBranch, ArrowRight } from "lucide-react";
+import { Zap, Shield, BarChart3, GitBranch, ArrowRight, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { LogoIcon } from "@/components/logo";
 
 const features = [
@@ -33,6 +35,27 @@ const features = [
 ];
 
 export default function LandingPage() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data, error }) => {
+      setUser(data?.user || null);
+      setLoading(false);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const isLoggedIn = !!user;
+
   return (
     <div className="min-h-screen bg-[#06070A] text-white overflow-hidden">
       {/* ── Header ───────────────────────────────────────── */}
@@ -43,19 +66,33 @@ export default function LandingPage() {
             <span className="font-bold text-lg text-gradient">FuseIQ</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="text-sm text-[#B8BED8] hover:text-white transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/login?signup=1"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
-            >
-              Get Started
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {!loading && (
+              isLoggedIn ? (
+                <Link
+                  href="/agents"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-sm text-[#B8BED8] hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/login?signup=1"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] text-sm font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Get Started
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </>
+              )
+            )}
           </div>
         </div>
       </header>
@@ -86,21 +123,35 @@ export default function LandingPage() {
             </p>
 
             <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link
-                href="/login?signup=1"
-                className="inline-flex items-center gap-2 px-8 h-12 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-lg hover:opacity-90 transition-opacity"
-              >
-                Start Free Trial
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+              {!loading && (
+                isLoggedIn ? (
+                  <Link
+                    href="/agents"
+                    className="inline-flex items-center gap-2 px-8 h-12 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-lg hover:opacity-90 transition-opacity"
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                    Go to Dashboard
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login?signup=1"
+                      className="inline-flex items-center gap-2 px-8 h-12 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#FFC857] text-[#06070A] font-semibold text-lg hover:opacity-90 transition-opacity"
+                    >
+                      Start Free Trial
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
 
-              {/* Secondary CTA — Live Demo */}
-              <Link
-                href="/demo"
-                className="inline-flex items-center gap-2 px-8 h-12 rounded-xl border border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 transition-colors text-lg"
-              >
-                Live Demo
-              </Link>
+                    <Link
+                      href="/demo"
+                      className="inline-flex items-center gap-2 px-8 h-12 rounded-xl border border-white/[0.08] text-[#B8BED8] hover:text-white hover:bg-white/5 transition-colors text-lg"
+                    >
+                      Live Demo
+                    </Link>
+                  </>
+                )
+              )}
             </div>
           </motion.div>
 
