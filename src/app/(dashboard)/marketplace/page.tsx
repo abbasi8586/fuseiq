@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { AgentCard } from "@/components/marketplace/agent-card";
 import { CategoryFilter } from "@/components/marketplace/category-filter";
 import { SearchBar } from "@/components/marketplace/search-bar";
@@ -17,10 +17,15 @@ import {
   Filter,
   ChevronDown,
   Flame,
+  Package,
+  Loader2,
+  X,
+  Bot,
+  Download,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// ─── Mock Data ───────────────────────────────────────────────────────────────
+import { toast } from "sonner";
 
 export interface MarketplaceAgent {
   id: string;
@@ -32,197 +37,14 @@ export interface MarketplaceAgent {
   rating: number;
   installs: number;
   author: string;
-  authorAvatar: string;
+  author_avatar: string;
   featured?: boolean;
   tags: string[];
   price?: string;
+  is_installed?: boolean;
+  config?: any;
+  created_at?: string;
 }
-
-const agents: MarketplaceAgent[] = [
-  {
-    id: "1",
-    name: "Code Review Pro",
-    description:
-      "Automated code review with AI-powered suggestions, security scans, and performance analysis for every pull request.",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop",
-    category: "Development",
-    framework: "GPT-4",
-    rating: 4.8,
-    installs: 12453,
-    author: "DevOps Labs",
-    authorAvatar: "DL",
-    featured: true,
-    tags: ["GitHub", "CI/CD", "Security"],
-    price: "Free",
-  },
-  {
-    id: "2",
-    name: "Content Catalyst",
-    description:
-      "Generate SEO-optimized blog posts, social media content, and email campaigns with brand voice consistency.",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a6667a?w=400&h=250&fit=crop",
-    category: "Marketing",
-    framework: "Claude",
-    rating: 4.6,
-    installs: 8932,
-    author: "GrowthStack",
-    authorAvatar: "GS",
-    featured: true,
-    tags: ["SEO", "Social", "Email"],
-    price: "$9/mo",
-  },
-  {
-    id: "3",
-    name: "Data Insight Engine",
-    description:
-      "Transform raw data into actionable business intelligence with automated reports and predictive analytics.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop",
-    category: "Analysis",
-    framework: "Kimi",
-    rating: 4.9,
-    installs: 6721,
-    author: "Analytics Pro",
-    authorAvatar: "AP",
-    featured: true,
-    tags: ["BI", "Predictive", "Reports"],
-    price: "$19/mo",
-  },
-  {
-    id: "4",
-    name: "Support Sentinel",
-    description:
-      "24/7 intelligent customer support with sentiment analysis, escalation routing, and multilingual responses.",
-    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=250&fit=crop",
-    category: "Support",
-    framework: "GPT-4",
-    rating: 4.5,
-    installs: 15420,
-    author: "HelpDesk AI",
-    authorAvatar: "HA",
-    tags: ["Ticketing", "Chat", "NLP"],
-    price: "Free",
-  },
-  {
-    id: "5",
-    name: "Task Master",
-    description:
-      "Project management automation with smart task assignment, deadline tracking, and team productivity insights.",
-    image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=250&fit=crop",
-    category: "Productivity",
-    framework: "CrewAI",
-    rating: 4.3,
-    installs: 5432,
-    author: "Productive AI",
-    authorAvatar: "PA",
-    tags: ["PM", "Kanban", "Teams"],
-    price: "$5/mo",
-  },
-  {
-    id: "6",
-    name: "Sales Accelerator",
-    description:
-      "AI-powered sales pipeline management, lead scoring, and automated follow-ups to close deals faster.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop",
-    category: "Marketing",
-    framework: "Claude",
-    rating: 4.7,
-    installs: 7891,
-    author: "Revenue AI",
-    authorAvatar: "RA",
-    tags: ["CRM", "Leads", "Funnel"],
-    price: "$15/mo",
-  },
-  {
-    id: "7",
-    name: "DevOps Guardian",
-    description:
-      "Infrastructure monitoring, anomaly detection, and automated incident response for cloud-native systems.",
-    image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07cc9?w=400&h=250&fit=crop",
-    category: "Development",
-    framework: "Custom",
-    rating: 4.4,
-    installs: 3210,
-    author: "CloudOps",
-    authorAvatar: "CO",
-    tags: ["DevOps", "SRE", "Cloud"],
-    price: "$25/mo",
-  },
-  {
-    id: "8",
-    name: "Meeting Scribe",
-    description:
-      "Real-time meeting transcription, action item extraction, and smart summarization for every conversation.",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=250&fit=crop",
-    category: "Productivity",
-    framework: "GPT-4",
-    rating: 4.6,
-    installs: 9876,
-    author: "NoteTaker AI",
-    authorAvatar: "NT",
-    tags: ["Transcription", "Notes", "Zoom"],
-    price: "$7/mo",
-  },
-  {
-    id: "9",
-    name: "Security Auditor",
-    description:
-      "Continuous security posture assessment, vulnerability scanning, and compliance report generation.",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&h=250&fit=crop",
-    category: "Analysis",
-    framework: "Kimi",
-    rating: 4.2,
-    installs: 2156,
-    author: "SecureAI",
-    authorAvatar: "SA",
-    tags: ["Security", "Compliance", "Audit"],
-    price: "$29/mo",
-  },
-  {
-    id: "10",
-    name: "Email Composer",
-    description:
-      "Smart email drafting with tone adjustment, follow-up scheduling, and inbox prioritization.",
-    image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=400&h=250&fit=crop",
-    category: "Productivity",
-    framework: "Claude",
-    rating: 4.1,
-    installs: 4567,
-    author: "Inbox AI",
-    authorAvatar: "IA",
-    tags: ["Email", "Gmail", "Outlook"],
-    price: "$3/mo",
-  },
-  {
-    id: "11",
-    name: "Custom Workflow Builder",
-    description:
-      "Build your own multi-step AI workflows with visual drag-and-drop interface and 50+ integrations.",
-    image: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=400&h=250&fit=crop",
-    category: "Custom",
-    framework: "CrewAI",
-    rating: 4.5,
-    installs: 3456,
-    author: "FlowBuilder",
-    authorAvatar: "FB",
-    tags: ["No-Code", "Workflow", "Integration"],
-    price: "$49/mo",
-  },
-  {
-    id: "12",
-    name: "Social Media Pilot",
-    description:
-      "Automated social media scheduling, content curation, and engagement analytics across all platforms.",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=250&fit=crop",
-    category: "Marketing",
-    framework: "GPT-4",
-    rating: 4.3,
-    installs: 6789,
-    author: "SocialFly",
-    authorAvatar: "SF",
-    tags: ["Social", "Analytics", "Scheduler"],
-    price: "$12/mo",
-  },
-];
 
 const categories = [
   "All",
@@ -242,42 +64,98 @@ const sortOptions = [
   { label: "Highest Rated", value: "rating", icon: Star },
 ];
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedFramework, setSelectedFramework] = useState("All");
   const [sortBy, setSortBy] = useState("popular");
   const [showFilters, setShowFilters] = useState(false);
+  const [myAgentsOnly, setMyAgentsOnly] = useState(false);
+
+  const [agents, setAgents] = useState<MarketplaceAgent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [previewAgent, setPreviewAgent] = useState<MarketplaceAgent | null>(null);
+
+  // Fetch agents from API
+  const fetchAgents = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (selectedCategory !== "All") params.set("category", selectedCategory);
+      if (selectedFramework !== "All") params.set("framework", selectedFramework);
+      if (searchQuery) params.set("search", searchQuery);
+      if (myAgentsOnly) params.set("my", "true");
+
+      const res = await fetch(`/api/marketplace?${params.toString()}`);
+      const data = await res.json();
+      if (data.agents) {
+        setAgents(data.agents);
+      }
+    } catch (err) {
+      console.error("Failed to fetch agents:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAgents();
+  }, [selectedCategory, selectedFramework, searchQuery, myAgentsOnly]);
+
+  // Install agent
+  const handleInstall = async (agentId: string) => {
+    try {
+      const res = await fetch("/api/marketplace/install", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agent_id: agentId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        setAgents((prev) =>
+          prev.map((a) => (a.id === agentId ? { ...a, is_installed: true, installs: a.installs + 1 } : a))
+        );
+      } else {
+        toast.error(data.error || "Failed to install");
+      }
+    } catch (err) {
+      toast.error("Network error during install");
+    }
+  };
+
+  // Uninstall agent
+  const handleUninstall = async (agentId: string) => {
+    try {
+      const res = await fetch(`/api/marketplace/install?agent_id=${agentId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Agent uninstalled");
+        setAgents((prev) =>
+          prev.map((a) => (a.id === agentId ? { ...a, is_installed: false, installs: Math.max(0, a.installs - 1) } : a))
+        );
+      }
+    } catch (err) {
+      toast.error("Failed to uninstall");
+    }
+  };
 
   const featuredAgents = agents.filter((a) => a.featured);
 
-  const filteredAgents = agents
-    .filter((agent) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchesCategory =
-        selectedCategory === "All" || agent.category === selectedCategory;
-      const matchesFramework =
-        selectedFramework === "All" || agent.framework === selectedFramework;
-      return matchesSearch && matchesCategory && matchesFramework;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "popular":
-          return b.installs - a.installs;
-        case "rating":
-          return b.rating - a.rating;
-        case "newest":
-          return parseInt(b.id) - parseInt(a.id);
-        default:
-          return 0;
-      }
-    });
+  const filteredAgents = [...agents].sort((a, b) => {
+    switch (sortBy) {
+      case "popular":
+        return b.installs - a.installs;
+      case "rating":
+        return b.rating - a.rating;
+      case "newest":
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="space-y-8">
@@ -304,12 +182,24 @@ export default function MarketplacePage() {
             </div>
           </div>
 
-          {/* Search + Sort Row */}
+          {/* Search + Sort + My Agents Row */}
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
             <div className="flex-1">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMyAgentsOnly(!myAgentsOnly)}
+                className={cn(
+                  "glass-card border-[#2A2D3E] text-[#6B7290] hover:text-white hover:border-[#00D4FF]/30",
+                  myAgentsOnly && "border-[#00E5A0]/50 text-[#00E5A0] bg-[#00E5A0]/10"
+                )}
+              >
+                <Package className="w-4 h-4 mr-2" />
+                {myAgentsOnly ? "My Agents" : "All Agents"}
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -351,11 +241,13 @@ export default function MarketplacePage() {
       </motion.div>
 
       {/* ── Category Chips ──────────────────────────────────────────────── */}
-      <CategoryFilter
-        categories={categories}
-        selected={selectedCategory}
-        onSelect={setSelectedCategory}
-      />
+      {!myAgentsOnly && (
+        <CategoryFilter
+          categories={categories}
+          selected={selectedCategory}
+          onSelect={setSelectedCategory}
+        />
+      )}
 
       {/* ── Expandable Filters ──────────────────────────────────────────── */}
       <motion.div
@@ -385,79 +277,243 @@ export default function MarketplacePage() {
         </GlassCard>
       </motion.div>
 
-      {/* ── Featured Banner ─────────────────────────────────────────────── */}
-      {selectedCategory === "All" &&
-        selectedFramework === "All" &&
-        searchQuery === "" && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-[#FFC857]" />
-              <h2 className="text-lg font-bold text-white">Featured Agents</h2>
-              <Badge className="bg-[#FFC857]/10 text-[#FFC857] border-[#FFC857]/20 text-xs">
-                Top Picks
-              </Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {featuredAgents.map((agent, i) => (
-                <motion.div
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * i }}
-                >
-                  <AgentCard agent={agent} featured />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-      {/* ── Agent Grid ──────────────────────────────────────────────────── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-[#FF6B35]" />
-            <h2 className="text-lg font-bold text-white">
-              {selectedCategory === "All" ? "All Agents" : selectedCategory}
-            </h2>
-            <span className="text-sm text-[#6B7290]">
-              ({filteredAgents.length})
-            </span>
-          </div>
+      {/* ── Loading State ───────────────────────────────────────────────── */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 text-[#00D4FF] animate-spin" />
+          <span className="ml-3 text-sm text-[#6B7290]">Loading agents...</span>
         </div>
+      )}
 
-        {filteredAgents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filteredAgents.map((agent, i) => (
+      {/* ── Featured Banner ─────────────────────────────────────────────── */}
+      {!loading && !myAgentsOnly && selectedCategory === "All" && selectedFramework === "All" && searchQuery === "" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-[#FFC857]" />
+            <h2 className="text-lg font-bold text-white">Featured Agents</h2>
+            <Badge className="bg-[#FFC857]/10 text-[#FFC857] border-[#FFC857]/20 text-xs">
+              Top Picks
+            </Badge>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {featuredAgents.map((agent, i) => (
               <motion.div
                 key={agent.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * i }}
+                transition={{ delay: 0.1 * i }}
               >
-                <AgentCard agent={agent} />
+                <AgentCard
+                  agent={agent}
+                  featured
+                  onInstall={handleInstall}
+                  onUninstall={handleUninstall}
+                  onPreview={setPreviewAgent}
+                />
               </motion.div>
             ))}
           </div>
-        ) : (
-          <GlassCard className="text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-[#2A2D3E] flex items-center justify-center mx-auto mb-4">
-              <ShoppingBag className="w-8 h-8 text-[#6B7290]" />
+        </motion.div>
+      )}
+
+      {/* ── Agent Grid ──────────────────────────────────────────────────── */}
+      {!loading && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Flame className="w-5 h-5 text-[#FF6B35]" />
+              <h2 className="text-lg font-bold text-white">
+                {myAgentsOnly ? "My Agents" : selectedCategory === "All" ? "All Agents" : selectedCategory}
+              </h2>
+              <span className="text-sm text-[#6B7290]">({filteredAgents.length})</span>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
-              No agents found
-            </h3>
-            <p className="text-sm text-[#6B7290]">
-              Try adjusting your search or filters to find what you&apos;re looking
-              for.
-            </p>
-          </GlassCard>
+          </div>
+
+          {filteredAgents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filteredAgents.map((agent, i) => (
+                <motion.div
+                  key={agent.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 * i }}
+                >
+                  <AgentCard
+                    agent={agent}
+                    onInstall={handleInstall}
+                    onUninstall={handleUninstall}
+                    onPreview={setPreviewAgent}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <GlassCard className="text-center py-16">
+              <div className="w-16 h-16 rounded-2xl bg-[#2A2D3E] flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="w-8 h-8 text-[#6B7290]" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {myAgentsOnly ? "No installed agents" : "No agents found"}
+              </h3>
+              <p className="text-sm text-[#6B7290]">
+                {myAgentsOnly
+                  ? "Browse the marketplace and install agents to see them here."
+                  : "Try adjusting your search or filters."}
+              </p>
+            </GlassCard>
+          )}
+        </div>
+      )}
+
+      {/* ── Preview Modal ───────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {previewAgent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setPreviewAgent(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto glass-card border border-white/[0.08] shadow-2xl rounded-2xl"
+            >
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden rounded-t-2xl">
+                <img
+                  src={previewAgent.image}
+                  alt={previewAgent.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#06070A] via-[#06070A]/40 to-transparent" />
+                <button
+                  onClick={() => setPreviewAgent(null)}
+                  className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/40 text-white hover:bg-black/60 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                {previewAgent.featured && (
+                  <Badge className="absolute top-3 left-3 bg-[#FFC857]/15 text-[#FFC857] border border-[#FFC857]/30 backdrop-blur-md">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Featured
+                  </Badge>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-6 space-y-4">
+                <div>
+                  <h2 className="text-xl font-bold text-white">{previewAgent.name}</h2>
+                  <p className="text-sm text-[#6B7290] mt-1">{previewAgent.description}</p>
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-[#FFC857]" />
+                    <span className="text-white font-medium">{previewAgent.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[#6B7290]">
+                    <Download className="w-4 h-4" />
+                    <span>{previewAgent.installs.toLocaleString()} installs</span>
+                  </div>
+                  <Badge
+                    className={cn(
+                      "border",
+                      previewAgent.price === "Free"
+                        ? "bg-[#00E5A0]/10 text-[#00E5A0] border-[#00E5A0]/30"
+                        : "bg-[#B829DD]/10 text-[#B829DD] border-[#B829DD]/30"
+                    )}
+                  >
+                    {previewAgent.price}
+                  </Badge>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {previewAgent.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-0.5 rounded-md bg-[#2A2D3E]/60 text-[#6B7290] text-xs font-medium border border-[#2A2D3E]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Author */}
+                <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white">
+                      {previewAgent.author_avatar || previewAgent.author?.charAt(0) || "A"}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white">{previewAgent.author}</p>
+                    <p className="text-xs text-[#6B7290]">Creator</p>
+                  </div>
+                </div>
+
+                {/* Config preview if available */}
+                {previewAgent.config && (
+                  <div className="bg-[#06070A]/50 rounded-xl p-3 border border-white/[0.06]">
+                    <p className="text-xs text-[#6B7290] mb-1">Role</p>
+                    <p className="text-sm text-[#B8BED8]">{previewAgent.config.role || "Assistant"}</p>
+                    {previewAgent.config.skills && (
+                      <>
+                        <p className="text-xs text-[#6B7290] mt-2 mb-1">Skills</p>
+                        <div className="flex flex-wrap gap-1">
+                          {previewAgent.config.skills.map((skill: string) => (
+                            <span key={skill} className="px-2 py-0.5 rounded bg-[#00D4FF]/10 text-[#00D4FF] text-[10px]">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex items-center gap-3 pt-2">
+                  {previewAgent.is_installed ? (
+                    <Button
+                      className="flex-1 bg-[#00E5A0]/15 text-[#00E5A0] border border-[#00E5A0]/30 hover:bg-[#00E5A0]/20"
+                      onClick={() => {
+                        handleUninstall(previewAgent.id);
+                        setPreviewAgent(null);
+                      }}
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Installed — Uninstall
+                    </Button>
+                  ) : (
+                    <Button
+                      className="flex-1 bg-[#00D4FF]/15 text-[#00D4FF] border border-[#00D4FF]/30 hover:bg-[#00D4FF]/25 hover:shadow-[0_0_15px_rgba(0,212,255,0.2)]"
+                      onClick={() => {
+                        handleInstall(previewAgent.id);
+                        setPreviewAgent(null);
+                      }}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Install {previewAgent.name}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

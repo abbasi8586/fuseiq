@@ -22,6 +22,7 @@ import {
   Settings,
   Hash,
   Bell,
+  ShoppingBag,
 } from "lucide-react";
 import { LogoIcon } from "@/components/logo";
 import { cn } from "@/lib/utils";
@@ -60,6 +61,12 @@ const sections: NavSection[] = [
       { icon: GitBranch, label: "Swarm Canvas", href: "/swarm" },
       { icon: FlaskConical, label: "Simulator", href: "/simulator" },
       { icon: Sparkles, label: "Co-Pilot", href: "/copilot" },
+    ],
+  },
+  {
+    title: "Discover",
+    items: [
+      { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
     ],
   },
   {

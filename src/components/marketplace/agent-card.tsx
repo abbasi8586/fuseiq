@@ -1,9 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { GlassCard } from "@/components/glass/glass-card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Star,
@@ -12,6 +10,8 @@ import {
   Check,
   Bot,
   Sparkles,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MarketplaceAgent } from "@/app/(dashboard)/marketplace/page";
@@ -24,6 +24,7 @@ const frameworkColors: Record<string, { bg: string; text: string; border: string
   Kimi: { bg: "bg-[#00E5A0]/10", text: "text-[#00E5A0]", border: "border-[#00E5A0]/20" },
   CrewAI: { bg: "bg-[#FF6B35]/10", text: "text-[#FF6B35]", border: "border-[#FF6B35]/20" },
   Custom: { bg: "bg-[#FFC857]/10", text: "text-[#FFC857]", border: "border-[#FFC857]/20" },
+  FuseIQ: { bg: "bg-[#B829DD]/10", text: "text-[#B829DD]", border: "border-[#B829DD]/20" },
 };
 
 function StarRating({ rating }: { rating: number }) {
@@ -49,53 +50,19 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function InstallButton({ agent }: { agent: MarketplaceAgent }) {
-  const [installed, setInstalled] = useState(false);
-
-  const handleInstall = () => {
-    setInstalled(true);
-    // In a real app, this would call an API to install the agent
-    // toast.success(`${agent.name} installed successfully`);
-    setTimeout(() => setInstalled(false), 3000);
-  };
-
-  return (
-    <Button
-      size="sm"
-      onClick={handleInstall}
-      disabled={installed}
-      className={cn(
-        "transition-all duration-300 text-xs font-medium",
-        installed
-          ? "bg-[#00E5A0]/15 text-[#00E5A0] border border-[#00E5A0]/30 hover:bg-[#00E5A0]/20"
-          : "bg-[#00D4FF]/15 text-[#00D4FF] border border-[#00D4FF]/30 hover:bg-[#00D4FF]/25 hover:shadow-[0_0_15px_rgba(0,212,255,0.2)]"
-      )}
-    >
-      {installed ? (
-        <>
-          <Check className="w-3.5 h-3.5 mr-1.5" />
-          Installed
-        </>
-      ) : (
-        <>
-          <Download className="w-3.5 h-3.5 mr-1.5" />
-          Install
-        </>
-      )}
-    </Button>
-  );
-}
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 interface AgentCardProps {
   agent: MarketplaceAgent;
   featured?: boolean;
+  onInstall?: (agentId: string) => void;
+  onUninstall?: (agentId: string) => void;
+  onPreview?: (agent: MarketplaceAgent) => void;
 }
 
-export function AgentCard({ agent, featured = false }: AgentCardProps) {
+export function AgentCard({ agent, featured = false, onInstall, onUninstall, onPreview }: AgentCardProps) {
   const fwStyle = frameworkColors[agent.framework] || frameworkColors.Custom;
-  const installCount = agent.installs.toLocaleString();
+  const installCount = (agent.installs || 0).toLocaleString();
 
   return (
     <GlassCard
@@ -107,7 +74,7 @@ export function AgentCard({ agent, featured = false }: AgentCardProps) {
       )}
     >
       {/* Image */}
-      <div className="relative h-44 overflow-hidden">
+      <div className="relative h-44 overflow-hidden cursor-pointer" onClick={() => onPreview?.(agent)}>
         <img
           src={agent.image}
           alt={agent.name}
@@ -153,6 +120,16 @@ export function AgentCard({ agent, featured = false }: AgentCardProps) {
             {agent.framework}
           </Badge>
         </div>
+
+        {/* Installed Badge */}
+        {agent.is_installed && (
+          <div className="absolute bottom-3 right-3">
+            <Badge className="bg-[#00E5A0]/15 text-[#00E5A0] border border-[#00E5A0]/30 backdrop-blur-md">
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              Installed
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -194,7 +171,7 @@ export function AgentCard({ agent, featured = false }: AgentCardProps) {
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#B829DD] flex items-center justify-center">
               <span className="text-[8px] font-bold text-white">
-                {agent.authorAvatar}
+                {agent.author_avatar || agent.author?.charAt(0) || "A"}
               </span>
             </div>
             <span className="text-xs text-[#6B7290]">{agent.author}</span>
@@ -203,15 +180,29 @@ export function AgentCard({ agent, featured = false }: AgentCardProps) {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 pt-1">
-          <InstallButton agent={agent} />
-          <Button
-            variant="outline"
-            size="sm"
-            className="glass-card border-[#2A2D3E] text-[#6B7290] hover:text-white hover:border-[#6B7290]/40 text-xs"
+          {agent.is_installed ? (
+            <button
+              onClick={() => onUninstall?.(agent.id)}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#00E5A0]/15 text-[#00E5A0] border border-[#00E5A0]/30 hover:bg-[#00E5A0]/20 transition-all"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Installed
+            </button>
+          ) : (
+            <button
+              onClick={() => onInstall?.(agent.id)}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#00D4FF]/15 text-[#00D4FF] border border-[#00D4FF]/30 hover:bg-[#00D4FF]/25 hover:shadow-[0_0_15px_rgba(0,212,255,0.2)] transition-all"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Install
+            </button>
+          )}
+          <button
+            onClick={() => onPreview?.(agent)}
+            className="px-3 py-2 rounded-lg text-xs font-medium glass-card border border-[#2A2D3E] text-[#6B7290] hover:text-white hover:border-[#6B7290]/40 transition-all"
           >
-            <Eye className="w-3.5 h-3.5 mr-1.5" />
-            Preview
-          </Button>
+            <Eye className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
