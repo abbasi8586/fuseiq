@@ -328,9 +328,10 @@ export function StaffDirectoryClient({ initialStaff }: Props) {
           initial="hidden"
           animate="show"
           className={viewMode === "grid"
-            ? "grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5"
+            ? "grid gap-5 w-full"
             : "space-y-3"
           }
+          style={viewMode === "grid" ? { gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" } : undefined}
         >
           {filteredStaff.map((member, i) => (
             <motion.div

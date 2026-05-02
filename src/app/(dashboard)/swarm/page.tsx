@@ -588,7 +588,7 @@ const initialEdges: Edge[] = [
     target: "2",
     type: "futuristic",
     data: { color: "#00D4FF", animated: true },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#00D4FF" },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#00D4FF" },
   },
   {
     id: "e2-3",
@@ -596,7 +596,7 @@ const initialEdges: Edge[] = [
     target: "3",
     type: "futuristic",
     data: { color: "#B829DD", animated: true },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#B829DD" },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#B829DD" },
   },
   {
     id: "e3-4",
@@ -605,7 +605,7 @@ const initialEdges: Edge[] = [
     sourceHandle: "yes",
     type: "futuristic",
     data: { color: "#00E5A0", animated: true },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#00E5A0" },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#00E5A0" },
     label: "Yes",
     labelStyle: { fill: "#00E5A0", fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" },
     labelBgStyle: { fill: "rgba(6,7,10,0.95)", rx: 6, stroke: "rgba(0,229,160,0.25)", strokeWidth: 1 },
@@ -619,7 +619,7 @@ const initialEdges: Edge[] = [
     sourceHandle: "no",
     type: "futuristic",
     data: { color: "#FF4757", animated: true },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#FF4757" },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#FF4757" },
     label: "No",
     labelStyle: { fill: "#FF4757", fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" },
     labelBgStyle: { fill: "rgba(6,7,10,0.95)", rx: 6, stroke: "rgba(255,71,87,0.25)", strokeWidth: 1 },
@@ -670,7 +670,7 @@ export default function SwarmCanvasPage() {
             ...connection,
             type: "futuristic",
             data: { color: "#00D4FF", animated: true },
-            markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#00D4FF" },
+            markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#00D4FF" },
           },
           eds
         )
@@ -990,7 +990,7 @@ export default function SwarmCanvasPage() {
             defaultEdgeOptions={{
               type: "futuristic",
               data: { color: "#00D4FF", animated: true },
-              markerEnd: { type: MarkerType.ArrowClosed, width: 5, height: 6, color: "#00D4FF" },
+              markerEnd: { type: MarkerType.ArrowClosed, width: 3, height: 3, color: "#00D4FF" },
             }}
           >
             <Background
